@@ -2,7 +2,7 @@ import { defineStore, storeToRefs } from "pinia";
 
 export const useLikesStore = defineStore("likes", {
   state: () => ({
-    likes: 1 as any,
+    likes: null as any,
   }),
 
   actions: {

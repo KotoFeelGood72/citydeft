@@ -1,9 +1,8 @@
 <template>
-  <div class="home">
-    <hero-slider class="home-slider" />
+  <div class="home" v-if="options">
+    <hero-slider class="home-slider" :sale-slider="options.saleSlider" />
     <v-filter class="home-filter" />
-
-    <!-- <div class="feature-house">
+    <div class="feature-house">
       <div class="container">
         <div class="feature-house__main">
           <div class="feature-house__top">
@@ -17,9 +16,9 @@
           </ul>
         </div>
       </div>
-    </div> -->
+    </div>
 
-    <!-- <div class="home-cat">
+    <div class="home-cat">
       <div class="container">
         <div class="home-cat__main">
           <div class="home-cat-top">
@@ -36,11 +35,15 @@
           </ul>
         </div>
       </div>
-    </div> -->
+    </div>
+    <!-- <template v-if="options">
+      <template v-if="options['action-block']">
+        <actions class="home-about" :data="options['action-block']" />
+      </template>
+    </template> -->
 
-    <!-- <actions class="home-about" :data="data.acf" />
-    <services class="home-services" :data="data.acf" />
-    <questions class="home-questions" /> -->
+    <!-- <services class="home-services" :data="data.acf" /> -->
+    <questions class="home-questions" />
   </div>
 </template>
 
@@ -53,18 +56,21 @@ import sectionTitle from "@/components/ui-kit/section-title.vue";
 import actions from "@/components/blocks/actions.vue";
 import services from "@/components/blocks/services.vue";
 import questions from "@/components/blocks/questions.vue";
+import { useOptionsStoreRefs } from "~/store/useOptionsStore";
 import { api } from "~/api/api";
 
 // Реактивные переменные
 const feature = ref<any>([]);
 const categories = ref<any>([]);
-const data = ref<any | null>(null);
+// const data = ref<any | null>(null);
+const { options } = useOptionsStoreRefs();
 
 // Запросы к API
 const getFeature = async () => {
   try {
     const response = await api.get("/wp/v2/estate?meta=2");
-    feature.value = response;
+    feature.value = response.data;
+    console.log(response.data);
   } catch (error) {
     console.error("Ошибка при загрузке feature:", error);
   }
@@ -73,26 +79,27 @@ const getFeature = async () => {
 const getCategories = async () => {
   try {
     const response = await api.get("/wp/v2/estate_categories/");
-    categories.value = response;
+    categories.value = response.data;
   } catch (error) {
     console.error("Ошибка при загрузке категорий:", error);
   }
 };
 
-const getContent = async () => {
-  try {
-    const res = await api.get("/acf/v3/options/options");
-    data.value = res;
-  } catch (error) {
-    console.error("Ошибка при загрузке контента:", error);
-  }
-};
+// const getContent = async () => {
+//   try {
+//     const res = await api.get("/acf/v3/options/options");
+//     data.value = res.data;
+//   } catch (error) {
+//     console.error("Ошибка при загрузке контента:", error);
+//   }
+// };
 
 // Инициализация данных
 onMounted(() => {
   getFeature();
   getCategories();
-  getContent();
+  // getContent();
+  // console.log(options.value["action-block"]);
 });
 </script>
 

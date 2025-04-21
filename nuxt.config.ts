@@ -17,10 +17,21 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/image", "@pinia/nuxt"],
+  modules: ["@nuxt/image", "@pinia/nuxt", "@nuxtjs/i18n"],
   image: {
     quality: 70,
     dir: "assets/img",
+  },
+
+  i18n: {
+    lazy: true,
+    locales: [
+      { code: "en", file: "en.json", name: "English" },
+      { code: "ru", file: "ru.json", name: "Русский" },
+      { code: "tr", file: "tr.json", name: "Türkçe" },
+    ],
+    defaultLocale: "ru",
+    strategy: "prefix_except_default",
   },
 });
 

@@ -3,7 +3,7 @@
     <div class="container">
       <div class="filter__main">
         <div class="filter-top">
-          <div class="filter-col" v-if="categories.length">
+          <div class="filter-col">
             <v-select
               :option="categories"
               label="Категория"
@@ -34,7 +34,7 @@
           <div class="filter-col price-col">
             <div class="label-input__group">Ценовой диапазон, €</div>
             <div class="input-group">
-              <v-input
+              <!-- <v-input
                 type="number"
                 minilabel="от"
                 v-model="filter.startPrice"
@@ -45,7 +45,7 @@
                 minilabel="до"
                 v-model="filter.endPrice"
                 :price="true"
-              />
+              /> -->
             </div>
           </div>
           <div class="filter-col max-w-50" v-if="selects[1]">
@@ -79,9 +79,9 @@
                 :multiple="true"
               />
             </div>
-            <div class="filter-col" v-if="selects[5]">
+            <div class="filter-col">
               <v-select
-                :option="selects[5]"
+                :option="years"
                 label="Год постройки"
                 id="date"
                 v-model="filter.date"
@@ -108,7 +108,7 @@
             <div class="filter-reset" @click="resetFilter">Сбросить фильтр</div>
           </li>
           <li>
-            <v-btn name="Поиск" class="rounded-btn small" @click="searchEvent" />
+            <!-- <v-btn name="Поиск" class="rounded-btn small" @click="searchEvent" /> -->
           </li>
         </ul>
       </div>
@@ -122,10 +122,13 @@ import { useRouter } from "vue-router";
 import vSelect from "@/components/ui-kit/v-select.vue";
 import vInput from "@/components/ui-kit/v-input.vue";
 import vBtn from "@/components/ui-kit/v-btn.vue";
+import { useOptionsStoreRefs } from "~/store/useOptionsStore";
+import { years } from "~/data/filter";
 import { api } from "~/api/api";
 
 defineProps<{ isOpen?: boolean }>();
 
+const { options } = useOptionsStoreRefs();
 const router = useRouter();
 
 const open = ref(false);
@@ -156,19 +159,19 @@ const resetFilter = () => {
   window.location.reload();
 };
 
-const searchEvent = () => {
-  const filteredParams = Object.entries(filter).reduce(
-    (acc: Record<string, any>, [key, value]) => {
-      if (value !== null && value !== "" && value !== undefined) {
-        acc[key] = value;
-      }
-      return acc;
-    },
-    {}
-  );
+// const searchEvent = () => {
+//   const filteredParams = Object.entries(filter).reduce(
+//     (acc: Record<string, any>, [key, value]) => {
+//       if (value !== null && value !== "" && value !== undefined) {
+//         acc[key] = value;
+//       }
+//       return acc;
+//     },
+//     {}
+//   );
 
-  router.push({ path: "/estate", query: filteredParams });
-};
+//   router.push({ path: "/estate", query: filteredParams });
+// };
 
 const getCategories = async () => {
   try {
@@ -187,7 +190,7 @@ const getCategories = async () => {
 const getAcfSelectValues = async () => {
   try {
     const response = await api.get("/city/v1/acf-select-values/");
-    selects.value = response;
+    selects.value = response.data;
   } catch (error) {
     console.error("Ошибка при получении ACF select значений:", error);
   }

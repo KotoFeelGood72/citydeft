@@ -4,7 +4,7 @@
       <span>Стоимость:</span>
       <p>{{ formattedPrice }}</p>
     </div>
-    <div class="add-favorite" @click="addToFavorites()">
+    <div class="add-favorite" @click="addToFavorites">
       <div class="icon-heart" :style="{ color: isFavorites ? '#FE753F' : '' }">
         <icons icon="mdi:heart" />
       </div>
@@ -12,15 +12,15 @@
     </div>
     <div class="group-btn">
       <v-btn
-        :name="!isStatus ? 'Оставить заявку' : 'Продано'"
-        @click.native="!isStatus ? open('form') : ''"
-        :class="{ disabled: isStatus }"
-        :disabled="isStatus"
+        :name="!isStatus.value ? 'Оставить заявку' : 'Продано'"
+        @click.native="!isStatus.value ? openModal('form') : ''"
+        :class="{ disabled: isStatus.value }"
+        :disabled="isStatus.value"
       />
       <v-btn
         name="Подобрать другой вариант"
         class="border owner"
-        @click.native="open('form')"
+        @click.native="openModal('form')"
       />
     </div>
     <div class="card-info">
@@ -44,62 +44,47 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { computed, ref, onMounted } from "vue";
 import icons from "@/components/icons/icons.vue";
-import vBtn from "../ui-kit/v-btn";
-// import { mapGetters } from "vuex";
+import vBtn from "../ui-kit/v-btn.vue";
+import { useLikesStore, useLikesStoreRefs } from "~/store/useLikesStore";
+import { useModalStore } from "~/store/useModalStore";
 
-export default {
-  components: {
-    vBtn,
-    icons,
-  },
-  props: ["info"],
-  data() {
-    return {
-      isFavorites: false,
-    };
-  },
-  computed: {
-    // ...mapGetters(['getFavorites']), // Убедитесь, что getFavorites возвращает массив
-    formattedPrice() {
-      return Number(this.info.acf.price).toLocaleString("de-DE");
-    },
-    isStatus() {
-      if (this.info.acf || Array.isArray(this.info.acf.status)) {
-        return this.info.acf.status.some((s) => s.label === "Продано");
-      }
-      return false;
-    },
-  },
-  methods: {
-    open(modal) {
-      this.$store.commit("openPopup", modal);
-    },
-    checkFavorite() {
-      // Проверяем, находится ли товар в списке избранных
-      const isFavorite = this.getFavorites.some((p) => p.id === this.info.id);
-      this.isFavorites = isFavorite; // Устанавливаем начальное состояние
-    },
-    addToFavorites() {
-      // Убедитесь, что getFavorites всегда возвращает массив
-      const isFavorite = this.getFavorites.some((p) => p.id === this.info.id);
+const props = defineProps<{ info: any }>();
 
-      if (isFavorite) {
-        this.$store.dispatch("removeFromFavorites", this.info.id);
-        this.$toast("Объект удален из избранного", { type: "error" });
-        this.isFavorites = false; // Обновляем состояние
-      } else {
-        this.$store.dispatch("addToFavorites", this.info);
-        this.$toast("Успешно добавлено в избранное", { type: "success" });
-        this.isFavorites = true; // Обновляем состояние
-      }
-    },
-  },
-  mounted() {
-    this.checkFavorite();
-  },
+const { likes } = useLikesStoreRefs();
+const likesStore = useLikesStore();
+const { openModal } = useModalStore();
+
+const isFavorites = ref(false);
+
+const formattedPrice = computed(() => {
+  return Number(props.info.acf.price).toLocaleString("de-DE");
+});
+
+const isStatus = computed(() => {
+  return props.info.acf.status?.some((s: any) => s.label === "Продано") ?? false;
+});
+
+const checkFavorite = () => {
+  isFavorites.value = likes.value?.some((p: any) => p.id === props.info.id);
 };
+
+const addToFavorites = () => {
+  const exists = likes.value?.some((p: any) => p.id === props.info.id);
+  if (exists) {
+    likesStore.removeLike(props.info.id);
+    isFavorites.value = false;
+  } else {
+    likesStore.addLike(props.info);
+    isFavorites.value = true;
+  }
+};
+
+onMounted(() => {
+  checkFavorite();
+});
 </script>
 
 <style lang="scss" scoped>

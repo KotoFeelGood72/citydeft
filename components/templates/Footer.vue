@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer" v-if="data">
+  <footer class="footer" v-if="options">
     <div class="container">
       <div class="footer_main">
         <div>
@@ -9,10 +9,10 @@
                 <NuxtImg src="logo.png" alt="" loading="lazy" />
               </nuxt-link>
             </div>
-            <div class="footer_info__descr">{{ data["brand-short"] }}</div>
+            <div class="footer_info__descr">{{ $t("brandShort") }}</div>
             <ul class="footer-social">
               <li
-                v-for="(item, i) in data['contacts'].social"
+                v-for="(item, i) in options.contacts.social"
                 :key="'social-footer-' + i"
               >
                 <a target="_blank" :href="item.link">
@@ -24,7 +24,7 @@
         </div>
         <div
           class="footer_col__nav"
-          v-for="(item, i) in data.navigation"
+          v-for="(item, i) in options.navigation"
           :key="item + 'footer-navigation-' + i"
         >
           <v-col-nav :data="item" />
@@ -36,7 +36,7 @@
       </div>
       <div class="mobile-bottom">
         <ul class="footer-social">
-          <li v-for="(item, i) in data['contacts'].social" :key="'social-footer-' + i">
+          <li v-for="(item, i) in options.contacts.social" :key="'social-footer-' + i">
             <a target="_blank" :href="item.link">
               <icons v-if="item.icon" :icon="item.icon" />
             </a>
@@ -53,10 +53,9 @@
 <script lang="ts" setup>
 import vColNav from "../ui-kit/v-col-nav.vue";
 import icons from "../icons/icons.vue";
+import { useOptionsStore, useOptionsStoreRefs } from "~/store/useOptionsStore";
 
-defineProps<{
-  data: any;
-}>();
+const { options } = useOptionsStoreRefs();
 
 const scrollToTop = () => {
   window.scrollTo({

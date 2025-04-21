@@ -5,52 +5,44 @@
   </div>
 </template>
 
-<script>
-import blockTxt from "../../components/templates/block-txt";
-import hero from "../../components/templates/hero";
-export default {
-  data() {
-    return {
-      data: null,
-      img: null,
-    };
-  },
-  components: {
-    hero,
-    blockTxt,
-  },
-  methods: {
-    async getServiceSingle() {
-      try {
-        const response = await this.$axios.get(
-          `/api/wp-json/wp/v2/service?slug=${this.$route.params.id}`
-        );
-        if (response.data && response.data.length > 0) {
-          this.data = response.data[0];
-          await this.getPostImg();
-        }
-      } catch (error) {
-        console.error("Ошибка при получении статьи:", error);
-      }
-    },
-    async getPostImg() {
-      if (!this.data.featured_media) return;
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { api } from "~/api/api";
 
-      try {
-        const response = await this.$axios.get(
-          `/api/wp-json/wp/v2/media/${this.data.featured_media}`
-        );
-        this.img = response.data;
-        console.log(this.img.source_url);
-      } catch (error) {
-        console.error("Ошибка при получении изображения:", error);
-      }
-    },
-  },
-  mounted() {
-    this.getServiceSingle();
-  },
+import blockTxt from "../../components/templates/block-txt.vue";
+import hero from "../../components/templates/hero.vue";
+
+const route = useRoute();
+const data = ref<any>(null);
+const img = ref<any>(null);
+
+const getServiceSingle = async () => {
+  try {
+    const response = await api.get(`/wp-json/wp/v2/service?slug=${route.params.id}`);
+    if (response.data && response.data.length > 0) {
+      data.value = response.data[0];
+      await getPostImg();
+    }
+  } catch (error) {
+    console.error("Ошибка при получении статьи:", error);
+  }
 };
+
+const getPostImg = async () => {
+  if (!data.value?.featured_media) return;
+  try {
+    const response = await api.get(`/wp-json/wp/v2/media/${data.value.featured_media}`);
+    img.value = response.data;
+    console.log(img.value.source_url);
+  } catch (error) {
+    console.error("Ошибка при получении изображения:", error);
+  }
+};
+
+onMounted(() => {
+  getServiceSingle();
+});
 </script>
 
 <style scoped></style>

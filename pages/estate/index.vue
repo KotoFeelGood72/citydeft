@@ -23,64 +23,65 @@
             :container-class="'global-paginate'"
             :prev-class="'paginate-prev'"
             :next-class="'paginate-next'"
-          >
-          </paginate>
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-import productsCard from "@/components/templates/products-card";
-import vFilter from "@/components/templates/v-filter";
-import sectionTitle from "@/components/ui-kit/section-title";
-export default {
-  components: {
-    vFilter,
-    sectionTitle,
-    productsCard,
-  },
-  data() {
-    return {
-      page: 1,
-      pages: null,
-      estate: [],
-      filtered: null,
-    };
-  },
-  watch: {
-    page(newPage) {
-      this.result(newPage);
-    },
-    $route: {
-      immediate: true,
-      handler() {
-        this.result();
-      },
-    },
-  },
-  methods: {
-    async result(page) {
-      const queryParams = {
-        ...this.$route.query,
-        page: page ? page.toString() : null,
-      };
-      try {
-        const response = await this.$axios.get("/api/wp-json/wp/v2/estate/filter", {
-          params: queryParams,
-        });
-        this.filtered = response.data;
-        this.pages = parseInt(response.headers["x-wp-totalpages"]);
-      } catch (error) {
-        console.error("Ошибка при выполнении запроса:", error);
-      }
-    },
-  },
-  mounted() {
-    this.result();
-  },
+<script lang="ts" setup>
+import { ref, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { api } from "~/api/api";
+
+import productsCard from "@/components/templates/products-card.vue";
+import vFilter from "@/components/templates/v-filter.vue";
+import sectionTitle from "@/components/ui-kit/section-title.vue";
+
+interface EstateItem {
+  id: number;
+  [key: string]: any;
+}
+
+const route = useRoute();
+const page = ref(1);
+const pages = ref<number | null>(null);
+const estate = ref<EstateItem[]>([]);
+const filtered = ref<EstateItem[] | null>(null);
+
+const result = async (currentPage?: number) => {
+  const queryParams = {
+    ...route.query,
+    page: currentPage ? currentPage.toString() : undefined,
+  };
+
+  try {
+    const response = await api.get("/wp-json/wp/v2/estate/filter", {
+      params: queryParams,
+    });
+    filtered.value = response.data;
+    pages.value = parseInt(response.headers["x-wp-totalpages"]);
+  } catch (error) {
+    console.error("Ошибка при выполнении запроса:", error);
+  }
 };
+
+onMounted(() => {
+  result();
+});
+
+watch(page, (newPage) => {
+  result(newPage);
+});
+
+watch(
+  () => route.fullPath,
+  () => {
+    result();
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>

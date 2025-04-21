@@ -1,5 +1,5 @@
 <template>
-  <div class="product-card" v-if="data && data.acf">
+  <div class="product-card" v-if="data">
     <div class="product-card__img">
       <ul class="product-status__list">
         <li
@@ -25,14 +25,14 @@
         <nuxt-link :to="`/estate/${data.slug}`">
           <h3>{{ data.title?.rendered || data.title }}</h3>
         </nuxt-link>
-        <button
+        <!-- <button
           type="button"
           class="btn-add__heart"
           :class="{ active: isFavorite }"
           @click="toggleFavorite"
         >
           <icons icon="mdi:heart" />
-        </button>
+        </button> -->
       </div>
 
       <div class="product-card__medium">
@@ -65,41 +65,31 @@
 <script setup lang="ts">
 import { computed } from "vue";
 // import { useToast } from "vue-toastification";
-import { useLikesStore } from "~/store/useLikesStore";
+import { useLikesStore, useLikesStoreRefs } from "~/store/useLikesStore";
 import icons from "../icons/icons.vue";
 
 const { addLike } = useLikesStore();
 const props = defineProps<{
-  data: {
-    id: number;
-    slug: string;
-    title: { rendered: string } | string;
-    acf: {
-      status: Array<{ label: string; value: string }>;
-      address: string;
-      price: number | string;
-      gallery: Array<{ images: string }>;
-      arrangement: Array<{ icon: string; num: string }>;
-    };
-  };
+  data: any;
 }>();
 
 const likesStore = useLikesStore();
+const { likes } = useLikesStoreRefs();
+
+console.log(props.data);
 // const toast = useToast();
 
-const isFavorite = computed(() =>
-  likesStore.likes.some((p: any) => p.id === props.data.id)
-);
+// const isFavorite = computed(() => likes.value.some((p: any) => p.id === props.data.id));
 
-const toggleFavorite = () => {
-  if (isFavorite.value) {
-    likesStore.removeLike(props.data.id);
-    // toast.error("Объект удалён из избранного");
-  } else {
-    likesStore.addLike(props.data);
-    // toast.success("Успешно добавлено в избранное");
-  }
-};
+// const toggleFavorite = () => {
+//   if (isFavorite.value) {
+//     likesStore.removeLike(props.data.id);
+//     // toast.error("Объект удалён из избранного");
+//   } else {
+//     likesStore.addLike(props.data);
+//     // toast.success("Успешно добавлено в избранное");
+//   }
+// };
 
 const formattedPrice = computed(() => {
   return Number(props.data.acf.price).toLocaleString("de-DE");

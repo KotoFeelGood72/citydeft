@@ -3,7 +3,7 @@
     <div class="container">
       <section-title :title="data.title.rendered" class="big" />
       <div class="house_hero__main">
-        <!-- <shop-slider :slider="data.acf.gallery"/> -->
+        <!-- <shop-slider :slider="data.acf.gallery" /> -->
         <shop-short :info="data" />
       </div>
       <div class="house_desciption">
@@ -41,35 +41,32 @@
   </div>
 </template>
 
-<script>
-import shopSlider from "../../components/shop/shop-slider";
-import shopShort from "../../components/shop/shop-short";
-import sectionTitle from "../../components/ui-kit/section-title";
-import icons from "@/components/icons/icons";
-export default {
-  components: {
-    shopSlider,
-    shopShort,
-    sectionTitle,
-    icons,
-  },
-  data() {
-    return {
-      data: null,
-    };
-  },
-  methods: {
-    async getPageID() {
-      const response = await this.$axios.$get(
-        `/api/wp-json/wp/v2/estate/?slug=${this.$route.params.id}`
-      );
-      this.data = response[0];
-    },
-  },
-  mounted() {
-    this.getPageID();
-  },
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { api } from "~/api/api";
+
+import shopSlider from "@/components/shop/shop-slider.vue";
+import shopShort from "@/components/shop/shop-short.vue";
+import sectionTitle from "@/components/ui-kit/section-title.vue";
+import icons from "@/components/icons/icons.vue";
+
+const route = useRoute();
+const data = ref<any>(null);
+
+const getPageID = async () => {
+  try {
+    const response = await api.get(`/wp/v2/estate/?slug=${route.params.slug}`);
+    data.value = response.data[0];
+  } catch (error) {
+    console.error("Ошибка при загрузке данных:", error);
+  }
 };
+
+onMounted(() => {
+  console.log(route.params);
+  getPageID();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -2,28 +2,31 @@
   <div class="top-header" v-if="options">
     <div class="container">
       <div class="top-header__main">
-        <ul class="social-list">
-          <li v-for="(item, i) in options.contacts.messenger" :key="'social-' + i">
-            <a :href="item.link">
-              <icons v-if="item.icon" :icon="item.icon" />
-            </a>
-          </li>
-        </ul>
-        <ul class="contacts-list">
-          <li>
-            <a :href="`tel:${options.contacts.phone}`">
-              <p>{{ options.contacts.phone }}</p>
-            </a>
-          </li>
-          <li>
-            <a :href="`mailto:${options.contacts.mail}`">
-              <div class="icon">
-                <icons icon="ei:envelope" />
-              </div>
-              <p>{{ options.contacts.mail }}</p>
-            </a>
-          </li>
-        </ul>
+        <switchLang />
+        <div class="right">
+          <ul class="social-list">
+            <li v-for="(item, i) in options.contacts.messenger" :key="'social-' + i">
+              <a :href="item.link">
+                <icons v-if="item.icon" :icon="item.icon" />
+              </a>
+            </li>
+          </ul>
+          <ul class="contacts-list">
+            <li>
+              <a :href="`tel:${options.contacts.phone}`">
+                <p>{{ options.contacts.phone }}</p>
+              </a>
+            </li>
+            <li>
+              <a :href="`mailto:${options.contacts.mail}`">
+                <div class="icon">
+                  <icons icon="ei:envelope" />
+                </div>
+                <p>{{ options.contacts.mail }}</p>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -32,6 +35,7 @@
 <script lang="ts" setup>
 import icons from "../icons/icons.vue";
 import { useOptionsStoreRefs } from "~/store/useOptionsStore";
+import switchLang from "../ui-kit/switch-lang.vue";
 
 const { options } = useOptionsStoreRefs();
 </script>
@@ -46,10 +50,11 @@ const { options } = useOptionsStoreRefs();
 }
 
 .top-header__main {
-  @include flex-end;
-  @include bp($point_2) {
-    justify-content: space-between;
-  }
+  // @include flex-end;
+  // justify-content: space-between;
+  @include flex-space;
+  // @include bp($point_2) {
+  // }
 }
 
 .social-list,
@@ -113,5 +118,9 @@ const { options } = useOptionsStoreRefs();
   @include bp($point_2) {
     padding: 0.5rem 0;
   }
+}
+
+.right {
+  @include flex-end;
 }
 </style>

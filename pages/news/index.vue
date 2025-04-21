@@ -16,55 +16,57 @@
           :container-class="'global-paginate'"
           :prev-class="'paginate-prev'"
           :next-class="'paginate-next'"
-        >
-        </paginate>
+        />
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  components: {
-    sectionTitle: () => import("@/components/ui-kit/section-title"),
-    articleCard: () => import("@/components/templates/article-card"),
-  },
-  data() {
-    return {
-      data: {},
-      page: 1,
-      pages: null,
-    };
-  },
-  methods: {
-    async GetNewsList(page = this.page) {
-      const response = await this.$axios.get(`/api/wp-json/wp/v2/posts`, {
-        params: {
-          per_page: 6,
-          page: page,
-          categories: 1,
-          _embed: "wp:term",
-        },
-      });
-      this.pages = parseInt(response.headers["x-wp-totalpages"]);
-      this.data = response.data;
-    },
-  },
-  mounted() {
-    this.GetNewsList();
-  },
-  watch: {
-    page(newPage) {
-      this.GetNewsList(newPage);
-    },
-    $route: {
-      immediate: true,
-      handler() {
-        this.GetNewsList();
+<script lang="ts" setup>
+import { ref, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { api } from "~/api/api";
+
+import sectionTitle from "@/components/ui-kit/section-title.vue";
+import articleCard from "@/components/templates/article-card.vue";
+
+const route = useRoute();
+const data = ref<any>([]);
+const page = ref(1);
+const pages = ref<number | null>(null);
+
+const getNewsList = async (currentPage: number = page.value) => {
+  try {
+    const response = await api.get("/wp-json/wp/v2/posts", {
+      params: {
+        per_page: 6,
+        page: currentPage,
+        categories: 1,
+        _embed: "wp:term",
       },
-    },
-  },
+    });
+    pages.value = parseInt(response.headers["x-wp-totalpages"]);
+    data.value = response.data;
+  } catch (error) {
+    console.error("Ошибка при получении списка новостей:", error);
+  }
 };
+
+onMounted(() => {
+  getNewsList();
+});
+
+watch(page, (newPage) => {
+  getNewsList(newPage);
+});
+
+watch(
+  () => route.fullPath,
+  () => {
+    getNewsList();
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>

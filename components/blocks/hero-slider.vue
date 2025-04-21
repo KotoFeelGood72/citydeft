@@ -1,5 +1,5 @@
 <template>
-  <section class="slider" v-if="options && options['sale-slider']">
+  <section class="slider">
     <div class="container">
       <div class="slider-main">
         <Swiper
@@ -9,7 +9,7 @@
         >
           <SwiperSlide
             class="swiper-slide"
-            v-for="(item, i) in options['sale-slider']"
+            v-for="(item, i) in saleSlider"
             :key="'slides-' + i"
           >
             <nuxt-link :to="item.link">
@@ -40,6 +40,10 @@ import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import { useOptionsStoreRefs } from "~/store/useOptionsStore";
+
+defineProps<{
+  saleSlider: any;
+}>();
 
 const { options } = useOptionsStoreRefs();
 

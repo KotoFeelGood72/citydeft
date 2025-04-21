@@ -45,7 +45,7 @@ import { useOptionsStoreRefs } from "~/store/useOptionsStore";
 
 const { options } = useOptionsStoreRefs();
 
-const activeIndex = ref<any>(1);
+const activeIndex = ref<any>();
 </script>
 
 <style lang="scss" scoped>

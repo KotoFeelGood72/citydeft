@@ -11,7 +11,7 @@
     <transition name="translate">
       <modal-burger v-if="isModalActive" :modal="data" />
     </transition>
-    <Footer v-if="data && data.acf" :data="data?.acf" />
+    <Footer />
     <!-- <transition name="translate"> -->
     <!-- <loader v-if="isLoading" /> -->
     <!-- </transition> -->
