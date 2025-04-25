@@ -6,15 +6,12 @@
     </main>
     <actions v-if="isFormPages" :forms="isFormPages" :data="data" />
     <transition name="translate">
-      <modal-form v-if="isModalActive" />
+      <modal-form v-if="activeModal === 'form'" />
     </transition>
     <transition name="translate">
-      <modal-burger v-if="isModalActive" :modal="data" />
+      <modal-burger v-if="activeModal === 'burger'" :modal="data" />
     </transition>
     <Footer />
-    <!-- <transition name="translate"> -->
-    <!-- <loader v-if="isLoading" /> -->
-    <!-- </transition> -->
     <yandex />
   </div>
 </template>
@@ -36,8 +33,8 @@ const { options } = useOptionsStoreRefs();
 const route = useRoute();
 const { modals } = useModalStoreRefs();
 
-const isModalActive = computed(() => {
-  return Object.values(modals.value).some((isActive) => isActive);
+const activeModal = computed(() => {
+  return Object.entries(modals.value).find(([_, isActive]) => isActive)?.[0] || null;
 });
 
 const isFormPages = computed(() => {

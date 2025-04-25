@@ -1,11 +1,11 @@
 <template>
-  <div class="top-header" v-if="options">
+  <div class="top-header">
     <div class="container">
       <div class="top-header__main">
         <switchLang />
         <div class="right">
           <ul class="social-list">
-            <li v-for="(item, i) in options.contacts.messenger" :key="'social-' + i">
+            <li v-for="(item, i) in socials" :key="'social-' + i">
               <a :href="item.link">
                 <icons v-if="item.icon" :icon="item.icon" />
               </a>
@@ -13,16 +13,16 @@
           </ul>
           <ul class="contacts-list">
             <li>
-              <a :href="`tel:${options.contacts.phone}`">
-                <p>{{ options.contacts.phone }}</p>
+              <a href="tel:+905077060007">
+                <p>+90 507 706 00 07</p>
               </a>
             </li>
             <li>
-              <a :href="`mailto:${options.contacts.mail}`">
+              <a href="mailto:info@citydeft.com">
                 <div class="icon">
                   <icons icon="ei:envelope" />
                 </div>
-                <p>{{ options.contacts.mail }}</p>
+                <p>info@citydeft.com</p>
               </a>
             </li>
           </ul>
@@ -34,10 +34,12 @@
 
 <script lang="ts" setup>
 import icons from "../icons/icons.vue";
-import { useOptionsStoreRefs } from "~/store/useOptionsStore";
 import switchLang from "../ui-kit/switch-lang.vue";
 
-const { options } = useOptionsStoreRefs();
+const socials = ref<any>([
+  { link: "https://wa.me/905077060007", icon: "ic:baseline-whatsapp" },
+  { link: "https://t.me/Deftgroup", icon: "ic:baseline-telegram" },
+]);
 </script>
 
 <style lang="scss" scoped>
@@ -50,11 +52,7 @@ const { options } = useOptionsStoreRefs();
 }
 
 .top-header__main {
-  // @include flex-end;
-  // justify-content: space-between;
   @include flex-space;
-  // @include bp($point_2) {
-  // }
 }
 
 .social-list,

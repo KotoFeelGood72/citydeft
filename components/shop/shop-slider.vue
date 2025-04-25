@@ -43,7 +43,7 @@ const props = defineProps<{
 const mainSwiper = ref<any>(null);
 const thumbsSwiper = ref<any>(null);
 
-const showThumbs = computed(() => props.slider && props.slider.length > 1);
+const showThumbs = computed(() => props.slider && props.slider?.length > 1);
 
 const thumbDirection = computed(() => {
   if (window.innerWidth >= 1200) return "vertical";
@@ -93,18 +93,21 @@ const onThumbsInit = (swiper: any) => {
   margin-right: 2rem;
   position: relative;
 
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   @include bp($point_2) {
     flex-direction: column;
     max-width: 50%;
-    // overflow: hidden;
     align-items: flex-start;
   }
   @include bp($point_4) {
     max-width: 100%;
     margin: 0 0 2rem 0;
   }
-  // flex-grow: 1;
-  // max-width: 100%;
 
   .swiper-container {
     height: 100%;
@@ -139,6 +142,7 @@ const onThumbsInit = (swiper: any) => {
   width: 100%;
   flex-grow: 1;
   position: relative;
+  height: 100%;
   @include bp($point_2) {
     margin-bottom: 2rem;
   }
@@ -151,12 +155,6 @@ const onThumbsInit = (swiper: any) => {
     }
   }
 }
-
-// .slider__wrapper {
-//     position: relative;
-//     width: 100%;
-//     max-width: 100%;
-// }
 
 .slider-nav {
   position: absolute;

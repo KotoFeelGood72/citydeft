@@ -68,7 +68,7 @@ const isStatus = computed(() => {
 });
 
 const checkFavorite = () => {
-  isFavorites.value = likes.value?.some((p: any) => p.id === props.info.id);
+  isFavorites.value = likes?.value?.some((p: any) => p.id === props.info.id);
 };
 
 const addToFavorites = () => {

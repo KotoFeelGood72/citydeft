@@ -3,7 +3,7 @@
     <div class="container">
       <section-title :title="data.title.rendered" class="big" />
       <div class="house_hero__main">
-        <!-- <shop-slider :slider="data.acf.gallery" /> -->
+        <shop-slider :slider="data.acf.gallery" />
         <shop-short :info="data" />
       </div>
       <div class="house_desciption">

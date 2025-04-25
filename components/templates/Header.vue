@@ -5,7 +5,7 @@
       <div class="header-main">
         <div class="logo">
           <nuxt-link to="/">
-            <NuxtImg src="logo.png" alt="" loading="lazy" />
+            <NuxtImg src="logo.png" alt="Логотип Deft Group" loading="lazy" />
           </nuxt-link>
         </div>
         <v-nav class="header-navs" />
@@ -13,7 +13,7 @@
           <v-btn name="Связаться" @click="openModal('form')" class="callback" />
           <nuxt-link to="/favorite" class="hearth-link">
             <icons icon="mdi:heart" />
-            <div class="counter" v-if="likes.length">{{ likes.length }}</div>
+            <div class="counter" v-if="likes && likes.length">{{ likes?.length }}</div>
           </nuxt-link>
           <div class="trigger-burger" @click="openModal('burger')">
             <span></span><span></span><span></span>
