@@ -2,7 +2,7 @@
   <div class="articles">
     <div class="container">
       <div class="articles-main">
-        <section-title title="Новости" class="big" />
+        <section-title title="Новости" class="big" :level="1" />
         <ul class="articles-list grid-3">
           <li v-for="(item, i) in data" :key="'news-item-' + i">
             <article-card :data="item" />
@@ -37,7 +37,7 @@ const pages = ref<number | null>(null);
 
 const getNewsList = async (currentPage: number = page.value) => {
   try {
-    const response = await api.get("/wp-json/wp/v2/posts", {
+    const response = await api.get("/wp/v2/posts", {
       params: {
         per_page: 6,
         page: currentPage,

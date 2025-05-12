@@ -1,48 +1,50 @@
 <template>
-  <div class="single-services" v-if="data">
-    <hero :content="data" :img="img" :container="true" />
-    <blockTxt :data="data.content.rendered" />
+  <div class="single-services" v-if="page">
+    <Hero :content="page" :img="img" :container="true" />
+    <BlockTxt :data="page.content.rendered" />
   </div>
 </template>
 
-<script>
-import blockTxt from "@/components/templates/block-txt";
-import hero from "@/components/templates/hero";
-export default {
-  data() {
-    return {
-      data: null,
-      img: null,
-    };
-  },
-  components: {
-    hero,
-    blockTxt,
-  },
-  methods: {
-    async getPageContent(point) {
-      const response = await this.$axios.get(`/api/wp-json/wp/v2/pages?slug=${point}`);
-      this.data = response.data[0];
-      await this.getPostImg();
-    },
-    async getPostImg() {
-      if (!this.data.featured_media) return;
+<script lang="ts" setup>
+import { ref, watch, onMounted } from "vue";
+import { useNuxtApp } from "#app";
+import { usePageContent } from "~/composables/usePageContent";
+import { api } from "~/api/api";
 
-      try {
-        const response = await this.$axios.get(
-          `/api/wp-json/wp/v2/media/${this.data.featured_media}`
-        );
-        this.img = response.data;
-        console.log(this.img.source_url);
-      } catch (error) {
-        console.error("Ошибка при получении изображения:", error);
-      }
-    },
-  },
-  mounted() {
-    this.getPageContent("procedure");
-  },
-};
+import Hero from "@/components/templates/hero.vue";
+import BlockTxt from "@/components/templates/block-txt.vue";
+
+interface Media {
+  source_url: string;
+  [key: string]: any;
+}
+
+// вместо локального data используем composable
+const { data: page, load } = usePageContent("procedure", "pages");
+const img = ref<Media | null>(null);
+
+// при изменении featured_media — грузим изображение
+watch(
+  () => page.value?.featured_media,
+  async (mediaId) => {
+    if (!mediaId) {
+      img.value = null;
+      return;
+    }
+    try {
+      const res = await api.get<Media>(`/wp/v2/media/${mediaId}`);
+      img.value = res.data;
+    } catch (e) {
+      console.error("Ошибка при получении изображения:", e);
+    }
+  }
+);
+
+onMounted(() => {
+  load(); // загрузим страницу 'procedure'
+});
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+/* ваша стилизация */
+</style>

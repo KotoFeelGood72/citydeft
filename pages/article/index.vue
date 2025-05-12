@@ -2,72 +2,88 @@
   <div class="articles">
     <div class="container">
       <div class="articles-main">
-        <section-title title="Статьи" class="big" />
+        <SectionTitle title="Статьи" class="big" :level="1" />
+
         <ul class="articles-list grid-3">
-          <li v-for="(item, i) in data" :key="'news-item-' + i">
-            <article-card :data="item" />
+          <li v-for="(item, i) in posts" :key="`news-item-${i}`">
+            <ArticleCard :data="item" />
           </li>
         </ul>
-        <paginate
-          v-if="pages && pages > 1"
-          :page-count="pages"
+
+        <VueAwesomePaginate
+          v-if="totalPages > 1"
+          :page-count="totalPages"
+          :click-handler="onPageChange"
           :page-range="3"
-          v-model="page"
-          :container-class="'global-paginate'"
-          :prev-class="'paginate-prev'"
-          :next-class="'paginate-next'"
-        >
-        </paginate>
+          :prev-text="'‹‹'"
+          :next-text="'››'"
+          container-class="global-paginate"
+          page-class="paginate-page"
+          active-page-class="paginate-page--active"
+          prev-class="paginate-prev"
+          next-class="paginate-next"
+        />
       </div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  components: {
-    sectionTitle: () => import("@/components/ui-kit/section-title"),
-    articleCard: () => import("@/components/templates/article-card"),
-  },
-  data() {
-    return {
-      data: {},
-      page: 1,
-      pages: null,
-    };
-  },
-  methods: {
-    async GetNewsList(page = this.page) {
-      const response = await this.$axios.get(`/api/wp-json/wp/v2/posts`, {
-        params: {
-          per_page: 6,
-          page: page,
-          categories: 11,
-          _embed: "wp:term",
-        },
-      });
-      this.pages = parseInt(response.headers["x-wp-totalpages"]);
-      this.data = response.data;
-    },
-  },
-  mounted() {
-    this.GetNewsList();
-  },
-  watch: {
-    page(newPage) {
-      this.GetNewsList(newPage);
-    },
-    $route: {
-      immediate: true,
-      handler() {
-        this.GetNewsList();
+<script lang="ts" setup>
+import { ref, watch, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import SectionTitle from "~/components/ui-kit/section-title.vue";
+import ArticleCard from "~/components/templates/article-card.vue";
+import VueAwesomePaginate from "vue-awesome-paginate";
+import "vue-awesome-paginate/dist/style.css";
+import { api } from "~/api/api";
+
+const route = useRoute();
+const router = useRouter();
+
+const page = ref(parseInt(route.query.page as string) || 1);
+const totalPages = ref(0);
+const posts = ref<any[]>([]);
+
+async function fetchPosts(pageNum = page.value) {
+  try {
+    const res = await api.get("/wp/v2/posts", {
+      params: {
+        per_page: 6,
+        page: pageNum,
+        categories: 11,
+        _embed: "wp:term",
       },
-    },
-  },
-};
+    });
+    posts.value = res.data;
+    totalPages.value = parseInt(res.headers["x-wp-totalpages"] || "0");
+  } catch (err) {
+    console.error("Ошибка при получении списка статей:", err);
+  }
+}
+
+function onPageChange(newPage: number) {
+  page.value = newPage;
+}
+
+watch(page, (newPage) => {
+  router.replace({ query: { ...route.query, page: newPage } });
+  fetchPosts(newPage);
+});
+
+watch(
+  () => route.query.page,
+  (newQ) => {
+    const p = parseInt(newQ as string) || 1;
+    if (p !== page.value) page.value = p;
+  }
+);
+
+onMounted(() => {
+  fetchPosts(page.value);
+});
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .articles {
   padding-top: 7.2rem;
 }
@@ -83,10 +99,21 @@ export default {
   margin-bottom: 8.5rem;
 }
 
-.articles-main {
+/* стили пагинации */
+.global-paginate {
+  display: flex;
+  justify-content: center;
   margin-bottom: 5rem;
-  .global-paginate {
-    justify-content: center;
-  }
+}
+
+.paginate-prev,
+.paginate-next,
+.paginate-page {
+  cursor: pointer;
+}
+
+.paginate-page--active {
+  font-weight: bold;
+  pointer-events: none;
 }
 </style>

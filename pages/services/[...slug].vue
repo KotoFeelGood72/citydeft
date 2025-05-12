@@ -1,48 +1,51 @@
 <template>
-  <div class="single-services" v-if="data">
-    <hero :content="data" :img="img" :container="true" />
-    <blockTxt :data="data.content.rendered" />
+  <div class="single-services" v-if="service">
+    <hero :content="service" :img="img" :container="true" />
+    <block-txt :data="service.content.rendered" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
+import { usePageContent } from "~/composables/usePageContent";
+import hero from "@/components/templates/hero.vue";
+import blockTxt from "@/components/templates/block-txt.vue";
 import { api } from "~/api/api";
 
-import blockTxt from "../../components/templates/block-txt.vue";
-import hero from "../../components/templates/hero.vue";
+interface Media {
+  source_url: string;
+  [key: string]: any;
+}
 
+// получаем slug из маршрута
 const route = useRoute();
-const data = ref<any>(null);
-const img = ref<any>(null);
+const slug = route.params.slug as string;
 
-const getServiceSingle = async () => {
-  try {
-    const response = await api.get(`/wp-json/wp/v2/service?slug=${route.params.id}`);
-    if (response.data && response.data.length > 0) {
-      data.value = response.data[0];
-      await getPostImg();
+// используем общую функцию для загрузки кастомного типа 'service'
+const { data: service, load } = usePageContent(slug, "service");
+
+const img = ref<Media | null>(null);
+
+// при появлении featured_media — грузим картинку
+watch(
+  () => service.value?.featured_media,
+  async (mediaId) => {
+    if (!mediaId) {
+      img.value = null;
+      return;
     }
-  } catch (error) {
-    console.error("Ошибка при получении статьи:", error);
+    try {
+      const res = await api.get<Media>(`/wp/v2/media/${mediaId}`);
+      img.value = res.data;
+    } catch (e) {
+      console.error("Ошибка при получении изображения:", e);
+    }
   }
-};
+);
 
-const getPostImg = async () => {
-  if (!data.value?.featured_media) return;
-  try {
-    const response = await api.get(`/wp-json/wp/v2/media/${data.value.featured_media}`);
-    img.value = response.data;
-    console.log(img.value.source_url);
-  } catch (error) {
-    console.error("Ошибка при получении изображения:", error);
-  }
-};
-
+// запускаем первоначальную загрузку данных
 onMounted(() => {
-  getServiceSingle();
+  load();
 });
 </script>
-
-<style scoped></style>

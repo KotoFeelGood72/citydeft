@@ -36,7 +36,7 @@ const img = ref<MediaData | null>(null);
 
 const getPostImg = async () => {
   try {
-    const res = await api.get(`/api/wp-json/wp/v2/media/${props.data.featured_media}`);
+    const res = await api.get(`/wp/v2/media/${props.data.featured_media}`);
     img.value = res as any;
   } catch (error) {
     console.error("Ошибка загрузки изображения:", error);

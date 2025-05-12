@@ -4,98 +4,59 @@
       <div class="filter__main">
         <div class="filter-top">
           <div class="filter-col">
-            <v-select
-              :option="categories"
-              label="Категория"
-              id="type-estate"
-              v-model="filter.category"
-              :multiple="false"
-              :stateSelected="true"
-            />
+            <p class="filter_col__label">Категория</p>
+            <Selects :options="buildCategories" v-model="filter.category" />
           </div>
-          <div class="filter-col" v-if="selects[7]">
-            <v-select
-              :option="selects[7]"
-              label="Тип недвижимости"
-              id="types"
-              v-model="filter.types"
-              :multiple="false"
-            />
+          <div class="filter-col">
+            <p class="filter_col__label">Тип недвижимости</p>
+            <Selects :options="buildTypes" v-model="filter.types" />
           </div>
-          <div class="filter-col" v-if="selects[0]">
-            <v-select
-              :option="selects[0]"
-              label="Район"
-              id="type-rayon"
-              v-model="filter.district"
-              :multiple="true"
-            />
+          <div class="filter-col">
+            <p class="filter_col__label">Район</p>
+            <Selects :options="buildDistrict" v-model="filter.district" />
           </div>
           <div class="filter-col price-col">
             <div class="label-input__group">Ценовой диапазон, €</div>
             <div class="input-group">
-              <!-- <v-input
+              <v-input
+                id="price-0"
                 type="number"
                 minilabel="от"
                 v-model="filter.startPrice"
                 :price="true"
               />
               <v-input
+                id="price-1"
                 type="number"
                 minilabel="до"
                 v-model="filter.endPrice"
                 :price="true"
-              /> -->
+              />
             </div>
           </div>
-          <div class="filter-col max-w-50" v-if="selects[1]">
-            <v-select
-              :option="selects[1]"
-              label="Планировка"
-              id="plan"
-              v-model="filter.plan"
-              :multiple="true"
-            />
+          <div class="filter-col">
+            <p class="filter_col__label">Планировка</p>
+            <Selects :options="buildPlan" v-model="filter.plan" />
           </div>
         </div>
 
         <div class="medium" v-if="open">
           <div class="filter-medium">
-            <div class="filter-col" v-if="selects[2]">
-              <v-select
-                :option="selects[2]"
-                label="Расстояние до моря"
-                id="km"
-                v-model="filter.km"
-                :multiple="true"
-              />
-            </div>
-            <div class="filter-col" v-if="selects[3]">
-              <v-select
-                :option="selects[3]"
-                label="Площадь"
-                id="place"
-                v-model="filter.place"
-                :multiple="true"
-              />
+            <div class="filter-col">
+              <p class="filter_col__label">Расстояние до моря</p>
+              <Selects :options="buildDistance" v-model="filter.km" />
             </div>
             <div class="filter-col">
-              <v-select
-                :option="years"
-                label="Год постройки"
-                id="date"
-                v-model="filter.date"
-                :multiple="true"
-              />
+              <p class="filter_col__label">Площадь</p>
+              <Selects :options="buildArea" v-model="filter.place" />
             </div>
-            <div class="filter-col" v-if="selects[6]">
-              <v-select
-                :option="selects[6]"
-                label="Инфаструктура"
-                id="info"
-                v-model="filter.infastructure"
-                :multiple="true"
-              />
+            <div class="filter-col">
+              <p class="filter_col__label">Год постройки</p>
+              <Selects :options="yearsOptions" v-model="filter.date" />
+            </div>
+            <div class="filter-col">
+              <p class="filter_col__label">Инфраструктура</p>
+              <Selects :options="buildInfrastructure" v-model="filter.infrastructure" />
             </div>
           </div>
         </div>
@@ -104,12 +65,8 @@
           <li>
             <div class="filter-more" @click="open = !open">Расширенные параметры</div>
           </li>
-          <li>
-            <div class="filter-reset" @click="resetFilter">Сбросить фильтр</div>
-          </li>
-          <li>
-            <!-- <v-btn name="Поиск" class="rounded-btn small" @click="searchEvent" /> -->
-          </li>
+          <li><div class="filter-reset" @click="resetFilter">Сбросить фильтр</div></li>
+          <li><v-btn name="Поиск" class="rounded-btn small" @click="searchEvent" /></li>
         </ul>
       </div>
     </div>
@@ -118,89 +75,91 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
-import vSelect from "@/components/ui-kit/v-select.vue";
+import { useRouter, useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
+
 import vInput from "@/components/ui-kit/v-input.vue";
 import vBtn from "@/components/ui-kit/v-btn.vue";
-import { useOptionsStoreRefs } from "~/store/useOptionsStore";
-import { years } from "~/data/filter";
-import { api } from "~/api/api";
+import Selects from "@/components/ui-kit/Selects.vue";
 
-defineProps<{ isOpen?: boolean }>();
-
-const { options } = useOptionsStoreRefs();
 const router = useRouter();
+const route = useRoute();
+const { tm } = useI18n();
 
 const open = ref(false);
 
-const categories = ref<any>([]);
-const selects = ref<any>([]);
-
+// реактивный объект фильтра
 const filter = reactive({
   category: null,
+  types: null,
   district: null,
   startPrice: null,
   endPrice: null,
   plan: null,
-  id: null,
   km: null,
   place: null,
-  adv: null,
   date: null,
-  infastructure: null,
+  infrastructure: null,
   page: 1,
   per_page: 6,
-  types: null,
 });
 
+// подтягиваем параметры из query, если есть
+onMounted(() => {
+  open.value = !!useAttrs().isOpen;
+  Object.entries(route.query).forEach(([key, val]) => {
+    if (key in filter) {
+      (filter as any)[key] = val;
+    }
+  });
+});
+
+// генератор годов с 1975 по текущий
+const currentYear = new Date().getFullYear();
+const yearsOptions = computed(() => {
+  const start = 1975;
+  return Array.from({ length: currentYear - start + 1 }, (_, i) => {
+    const y = String(start + i);
+    return { id: y, name: y };
+  });
+});
+
+// переводимые массивы опций
+const buildCategories = computed(() => tm("buildCategories"));
+const buildTypes = computed(() => tm("buildTypes"));
+const buildDistrict = computed(() => tm("buildDistrict"));
+const buildPlan = computed(() => tm("buildPlan"));
+const buildDistance = computed(() => tm("buildDistance"));
+const buildArea = computed(() => tm("buildArea"));
+const buildInfrastructure = computed(() => tm("buildInfrastructure"));
+
+// Сбрасываем URL и перезагружаем
 const resetFilter = () => {
-  const url = new URL(window.location.href);
-  window.history.pushState({}, "", url.pathname);
+  window.history.pushState({}, "", location.pathname);
   window.location.reload();
 };
 
-// const searchEvent = () => {
-//   const filteredParams = Object.entries(filter).reduce(
-//     (acc: Record<string, any>, [key, value]) => {
-//       if (value !== null && value !== "" && value !== undefined) {
-//         acc[key] = value;
-//       }
-//       return acc;
-//     },
-//     {}
-//   );
+const searchEvent = () => {
+  // 1. Явно типизируем entries
+  const entries = Object.entries(filter) as [string, string | number | null][];
 
-//   router.push({ path: "/estate", query: filteredParams });
-// };
+  // 2. Делаем reduce с корректными типами
+  const params = entries.reduce<Record<string, string | number>>((acc, [k, v]) => {
+    // 2.1. Отбрасываем null и undefined
+    if (v == null) return acc;
 
-const getCategories = async () => {
-  try {
-    const response: any = await api.get("/wp/v2/estate_categories/");
-    console.log("Categories response:", response);
+    // 2.2. Если строка — отбрасываем пустые
+    if (typeof v === "string" && v.trim() === "") {
+      return acc;
+    }
 
-    // ЕСЛИ это объект с массивом внутри:
-    categories.value = Array.isArray(response)
-      ? response.map((item: any) => item.name)
-      : [];
-  } catch (err) {
-    console.error("Ошибка при загрузке категорий:", err);
-  }
+    // 2.3. Всё остальное (числа и непустые строки) сохраняем
+    acc[k] = v;
+    return acc;
+  }, {});
+
+  router.push({ path: "/estate", query: params });
 };
-
-const getAcfSelectValues = async () => {
-  try {
-    const response = await api.get("/city/v1/acf-select-values/");
-    selects.value = response.data;
-  } catch (error) {
-    console.error("Ошибка при получении ACF select значений:", error);
-  }
-};
-
-onMounted(() => {
-  open.value = !!useAttrs().isOpen;
-  getCategories();
-  getAcfSelectValues();
-});
 </script>
 
 <style lang="scss" scoped>
@@ -242,7 +201,7 @@ onMounted(() => {
   font-size: 1.4rem;
   font-weight: 400;
   font-family: $font_2;
-  margin-bottom: 1.3rem;
+  margin-bottom: 1rem;
   text-align: center;
   @include bp($point_4) {
     font-size: 1.2rem;
@@ -338,5 +297,10 @@ onMounted(() => {
       }
     }
   }
+}
+
+.filter_col__label {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
 }
 </style>

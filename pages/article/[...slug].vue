@@ -1,48 +1,42 @@
 <template>
-  <div class="article" v-if="data">
+  <div class="article" v-if="post">
     <div class="article-head__w">
       <div class="container">
         <div class="article-head">
           <div class="back-link">
-            <nuxt-link to="/article/">
+            <NuxtLink to="/news/">
               <icons icon="radix-icons:chevron-left" />
               <p>Читать другую статью</p>
-            </nuxt-link>
+            </NuxtLink>
           </div>
-          <section-title
-            :title="data.title ? data.title.rendered : ''"
-            class="big single-title"
-          />
+          <SectionTitle :title="post.title?.rendered || ''" class="big single-title" />
         </div>
         <div class="article_main__img">
           <NuxtImg v-if="img" :src="img.source_url" alt="" loading="lazy" />
         </div>
       </div>
     </div>
+
     <div class="article-main">
       <div class="container">
-        <div
-          class="article-content"
-          v-if="data && data.content"
-          v-html="data.content.rendered"
-        ></div>
+        <div class="article-content" v-if="post.content" v-html="post.content.rendered" />
       </div>
     </div>
+
     <div class="article-bottom__w">
       <div class="container">
         <div class="article-bottom">
-          <p>Понравилась статья - поделись с друзьями</p>
+          <p>Понравилась статья — поделись с друзьями</p>
           <ul>
-            <li v-for="(item, i) in social" :key="'social-shared' + i">
-              <ShareNetwork
-                v-if="url"
-                :network="item.social"
-                :url="'https://citydeft.com/' + url"
-                :title="shared.og_title"
-                :description="shared.og_description"
+            <li v-for="(item, i) in social" :key="`social-shared-${i}`">
+              <a
+                v-if="pageUrl"
+                :href="shareLink(item.network)"
+                target="_blank"
+                rel="noopener"
               >
-                <NuxtImg :src="`${item.icon}`" alt="" loading="lazy" />
-              </ShareNetwork>
+                <NuxtImg :src="item.icon" alt="" loading="lazy" />
+              </a>
             </li>
           </ul>
         </div>
@@ -51,82 +45,74 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      data: null,
-      img: null,
-      shared: null,
-      url: null,
-      social: [
-        { social: "Facebook", icon: "facebook.svg" },
-        { social: "Telegram", icon: "telegram.svg" },
-        { social: "WhatsApp", icon: "whatsapp.svg" },
-        { social: "VK", icon: "vk.svg" },
-        { social: "odnoklassniki", icon: "ok.svg" },
-      ],
-    };
-  },
-  components: {
-    sectionTitle: () => import("@/components/ui-kit/section-title"),
-    icons: () => import("@/components/icons/icons"),
-  },
-  methods: {
-    async getArticleSingle() {
-      try {
-        const response = await this.$axios.get(
-          `/api/wp-json/wp/v2/posts?slug=${this.$route.params.id}`
-        );
-        if (response.data && response.data.length > 0) {
-          this.data = response.data[0];
-          this.shared = response.data[0].yoast_head_json;
-          this.url = this.$route.fullPath;
-          await this.getPostImg();
-        }
-      } catch (error) {
-        console.error("Ошибка при получении статьи:", error);
-      }
-    },
-    async getPostImg() {
-      if (!this.data.featured_media) return;
+<script lang="ts" setup>
+import { ref, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { usePageContent } from "~/composables/usePageContent";
+import { api } from "~/api/api";
 
-      try {
-        const response = await this.$axios.get(
-          `/api/wp-json/wp/v2/media/${this.data.featured_media}`
-        );
-        this.img = response.data;
-      } catch (error) {
-        console.error("Ошибка при получении изображения:", error);
-      }
-    },
-  },
-  mounted() {
-    this.getArticleSingle();
-  },
-};
+import SectionTitle from "@/components/ui-kit/section-title.vue";
+import icons from "@/components/icons/icons.vue";
+
+interface SocialItem {
+  network: "Facebook" | "Telegram" | "WhatsApp" | "VK" | "Odnoklassniki";
+  icon: string;
+}
+
+const route = useRoute();
+// usePageContent with resource 'posts'
+const { data: post, load } = usePageContent(route.params.slug as string, "posts");
+
+const img = ref<any>(null);
+const pageUrl = ref<string>("");
+
+const social: SocialItem[] = [
+  { network: "Facebook", icon: "facebook.svg" },
+  { network: "Telegram", icon: "telegram.svg" },
+  { network: "WhatsApp", icon: "whatsapp.svg" },
+  { network: "VK", icon: "vk.svg" },
+  { network: "Odnoklassniki", icon: "ok.svg" },
+];
+
+function shareLink(network: string) {
+  const encoded = encodeURIComponent(pageUrl.value);
+  switch (network) {
+    case "Facebook":
+      return `https://www.facebook.com/sharer/sharer.php?u=${encoded}`;
+    case "Telegram":
+      return `https://t.me/share/url?url=${encoded}`;
+    case "WhatsApp":
+      return `https://api.whatsapp.com/send?text=${encoded}`;
+    case "VK":
+      return `https://vk.com/share.php?url=${encoded}`;
+    case "Odnoklassniki":
+      return `https://connect.ok.ru/offer?url=${encoded}`;
+    default:
+      return pageUrl.value;
+  }
+}
+
+// when post changes, fetch its featured image
+watch(
+  () => post.value?.featured_media,
+  async (mediaId) => {
+    if (!mediaId) return;
+    try {
+      const res = await api.get(`/wp-json/wp/v2/media/${mediaId}`);
+      img.value = res.data;
+    } catch (e) {
+      console.error("Ошибка при получении изображения:", e);
+    }
+  }
+);
+
+onMounted(() => {
+  pageUrl.value = window.location.href;
+  load();
+});
 </script>
 
 <style lang="scss" scoped>
-.article-content {
-  :deep(ul) {
-    font-size: 2.2rem;
-    padding-left: 2rem;
-    @include bp($point_2) {
-      font-size: 1.6rem;
-    }
-  }
-}
-.article-content {
-  :deep(li) {
-    padding: 0.7rem 0;
-    position: relative;
-    &:before {
-      content: "- ";
-    }
-  }
-}
-
 .article {
   padding-top: 6rem;
   @include bp($point_2) {

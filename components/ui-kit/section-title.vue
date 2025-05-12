@@ -1,24 +1,23 @@
 <template>
-    <component :is="`h${level}`">{{ title }} <span><slot></slot></span></component>
+  <component :is="`h${level}`"
+    >{{ title }} <span><slot></slot></span
+  ></component>
 </template>
 
-<script>
-  export default {
-    props: {
-      title: {
-        type: String,
-        required: true
-      },
-      level: {
-        type: Number,
-        default: 1
-      }
-    }
+<script lang="ts" setup>
+const props = withDefaults(
+  defineProps<{
+    title?: string;
+    level?: number;
+  }>(),
+  {
+    title: "",
+    level: 1,
   }
+);
 </script>
 
 <style lang="scss" scoped>
-
 .big {
   font-size: 4.4rem;
   font-weight: 700;
@@ -38,5 +37,4 @@
     font-size: 3.5rem;
   }
 }
-
 </style>

@@ -2,7 +2,7 @@
   <div class="articles">
     <div class="container">
       <div class="articles-main">
-        <section-title title="Услуги" class="big" />
+        <section-title title="Услуги" class="big" :level="1" />
         <ul class="articles-list grid-3">
           <li v-for="(item, i) in data" :key="'services-item-' + i">
             <article-card :data="item" />

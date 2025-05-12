@@ -1,28 +1,30 @@
 <template>
-  <div class="contacts" v-if="data">
+  <div class="contacts" v-if="options">
     <div class="container">
-      <sectionTitle title="Контакты" class="big center" />
+      <section-title title="Контакты" class="big center" />
       <div class="contacts_main">
         <div class="contacts__info">
           <ul>
             <li>
               <span>Мы работаем:</span>
               <p>
-                Понедельник-пятница — <br />с 09:00 до 18:00 <br />суббота — с 09:00 до
-                15:30 <br />воскресенье — выходной
+                Понедельник–пятница —<br />
+                с 09:00 до 18:00<br />
+                суббота — с 09:00 до 15:30<br />
+                воскресенье — выходной
               </p>
             </li>
             <li>
               <span>Телефон:</span>
-              <a :href="`tel:${data['contacts'].phone}`">{{ data["contacts"].phone }}</a>
+              <a :href="`tel:${options.contacts.phone}`">{{ options.contacts.phone }}</a>
               <p>На связи 24/7</p>
               <ul class="social">
-                <li></li>
+                <li />
               </ul>
             </li>
             <li>
               <span>Электронная почта:</span>
-              <a :href="`mailto:${data['contacts'].mail}`">{{ data["contacts"].mail }}</a>
+              <a :href="`mailto:${options.contacts.mail}`">{{ options.contacts.mail }}</a>
             </li>
             <li>
               <span>Наш офис:</span>
@@ -32,10 +34,10 @@
               <span>Мы в социальных сетях:</span>
               <ul class="contacts-social">
                 <li
-                  v-for="(item, i) in data['contacts'].social"
-                  :key="'social-footer-' + i"
+                  v-for="(item, i) in options.contacts.social"
+                  :key="`social-footer-${i}`"
                 >
-                  <a target="_blank" :href="item.link">
+                  <a :href="item.link" target="_blank" rel="noopener">
                     <icons v-if="item.icon" :icon="item.icon" />
                   </a>
                 </li>
@@ -49,36 +51,23 @@
             width="100%"
             height="450"
             style="border: 0"
-            allowfullscreen=""
+            allowfullscreen
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
 import sectionTitle from "../components/ui-kit/section-title.vue";
 import icons from "../components/icons/icons.vue";
-export default {
-  components: { sectionTitle, icons },
-  data() {
-    return {
-      data: null,
-    };
-  },
-  methods: {
-    async getContent() {
-      const res = await this.$axios.$get("/api/wp-json/acf/v3/options/options");
-      this.data = res.acf;
-    },
-  },
-  mounted() {
-    this.getContent();
-  },
-};
+import { useOptionsStoreRefs } from "~/store/useOptionsStore";
+
+const { options } = useOptionsStoreRefs();
 </script>
 
 <style scoped lang="scss">
@@ -99,11 +88,9 @@ export default {
   grid-template-columns: repeat(auto-fill, minmax(45%, 1fr));
   grid-gap: 6rem;
 }
-
 .contacts__map {
   width: 100%;
 }
-
 .contacts__info {
   span {
     font-size: 2.2rem;
@@ -122,16 +109,12 @@ export default {
   a {
     margin-bottom: 0.5rem;
   }
-
-  & > ul {
-    & > li {
-      &:not(:last-child) {
-        margin-bottom: 3rem;
-      }
+  & > ul > li {
+    &:not(:last-child) {
+      margin-bottom: 3rem;
     }
   }
 }
-
 .contacts-social {
   @include flex-start;
   flex-wrap: wrap;

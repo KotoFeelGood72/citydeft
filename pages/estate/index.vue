@@ -57,7 +57,7 @@ const result = async (currentPage?: number) => {
   };
 
   try {
-    const response = await api.get("/wp-json/wp/v2/estate/filter", {
+    const response = await api.get("/wp/v2/estate/filter", {
       params: queryParams,
     });
     filtered.value = response.data;

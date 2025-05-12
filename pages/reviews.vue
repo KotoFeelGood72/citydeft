@@ -1,11 +1,11 @@
 <template>
-  <div class="vacancy" v-if="data">
+  <div class="vacancy" v-if="data && data[0]">
     <div class="container">
       <div class="vacancy__main">
-        <sectionTitle title="Отзывы" class="big" />
-        <ul class="vacancy__list" v-if="data && data.acf">
-          <li v-for="(item, i) in data.acf.reviews" :key="'vacancy-item' + i">
-            <circleCard :data="item" />
+        <section-title title="Отзывы" class="big" :level="1" />
+        <ul class="vacancy__list" v-if="data[0]?.acf">
+          <li v-for="(item, i) in data[0].acf?.reviews" :key="`vacancy-item-${i}`">
+            <circle-card :data="item" />
           </li>
         </ul>
       </div>
@@ -13,27 +13,18 @@
   </div>
 </template>
 
-<script>
-import sectionTitle from "@/components/ui-kit/section-title.vue";
-import circleCard from "../components/templates/circle-card.vue";
-export default {
-  components: {
-    sectionTitle,
-    circleCard,
-  },
-  data: () => ({
-    data: null,
-  }),
-  methods: {
-    async getPageContent(point) {
-      const response = await this.$axios.get(`/api/wp-json/wp/v2/pages?slug=${point}`);
-      this.data = response.data[0];
-    },
-  },
-  mounted() {
-    this.getPageContent("reviews");
-  },
-};
+<script lang="ts" setup>
+import { onMounted } from "vue";
+
+import SectionTitle from "@/components/ui-kit/section-title.vue";
+import CircleCard from "@/components/templates/circle-card.vue";
+import { usePageContent } from "@/composables/usePageContent";
+
+const { data, load } = usePageContent("reviews");
+
+onMounted(() => {
+  load("reviews");
+});
 </script>
 
 <style scoped lang="scss">
