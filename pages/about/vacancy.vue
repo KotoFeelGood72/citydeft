@@ -1,10 +1,10 @@
 <template>
-  <div class="vacancy" v-if="data">
+  <div class="vacancy" v-if="page">
     <div class="container">
       <div class="vacancy__main">
         <sectionTitle title="Вакансии" class="big" />
-        <ul class="vacancy__list" v-if="data && data.acf">
-          <li v-for="(item, i) in data.acf.vacancy" :key="'vacancy-item' + i">
+        <ul class="vacancy__list" v-if="page.acf?.vacancy">
+          <li v-for="(item, i) in page.acf.vacancy" :key="'vacancy-item-' + i">
             <CircleCard :data="item" />
           </li>
         </ul>
@@ -18,28 +18,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { onMounted } from "vue";
+import { usePageContent } from "~/composables/usePageContent";
+
 import CircleCard from "@/components/templates/circle-card.vue";
-import sectionTitle from "../../components/ui-kit/section-title.vue";
-export default {
-  components: {
-    sectionTitle,
-    CircleCard,
-  },
-  data: () => ({
-    data: null,
-    img: null,
-  }),
-  methods: {
-    async getPageContent(point) {
-      const response = await this.$axios.get(`/api/wp-json/wp/v2/pages?slug=${point}`);
-      this.data = response.data[0];
-    },
-  },
-  mounted() {
-    this.getPageContent("vacancy");
-  },
-};
+import sectionTitle from "@/components/ui-kit/section-title.vue";
+
+// Данные страницы
+const { data: page, load } = usePageContent("vacancy", "pages");
+
+// Загрузка данных при монтировании
+onMounted(() => {
+  load();
+});
 </script>
 
 <style scoped lang="scss">
@@ -61,6 +53,7 @@ export default {
     font-size: 1.6rem;
     line-height: 2.4rem;
   }
+
   a {
     font-weight: 600;
   }
