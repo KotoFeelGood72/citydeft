@@ -47,6 +47,10 @@ onMounted(async () => {
     await getPostImg(page.value.featured_media);
   }
 });
+
+watchEffect(() => {
+  useSeoMeta(840);
+});
 </script>
 
 <style scoped lang="scss">

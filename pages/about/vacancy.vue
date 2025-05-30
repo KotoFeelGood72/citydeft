@@ -32,6 +32,10 @@ const { data: page, load } = usePageContent("vacancy", "pages");
 onMounted(() => {
   load();
 });
+
+watchEffect(() => {
+  useSeoMeta(842);
+});
 </script>
 
 <style scoped lang="scss">

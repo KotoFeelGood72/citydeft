@@ -58,6 +58,10 @@ onMounted(async () => {
   }
   // await getContent();
 });
+
+watchEffect(() => {
+  useSeoMeta(838);
+});
 </script>
 
 <style scoped lang="scss">

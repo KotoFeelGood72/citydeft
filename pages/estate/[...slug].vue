@@ -67,6 +67,12 @@ onMounted(() => {
   console.log(route.params);
   getPageID();
 });
+
+watchEffect(() => {
+  if (data.value?.id) {
+    useSeoMeta(data.value.id);
+  }
+});
 </script>
 
 <style lang="scss" scoped>

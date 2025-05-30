@@ -7,12 +7,15 @@
 
 <script lang="ts" setup>
 import { ref, watch, onMounted } from "vue";
-import { useNuxtApp } from "#app";
 import { usePageContent } from "~/composables/usePageContent";
 import { api } from "~/api/api";
 
 import Hero from "@/components/templates/hero.vue";
 import BlockTxt from "@/components/templates/block-txt.vue";
+import { useRoute } from "vue-router";
+import { useSeoMeta } from "@/composables/useSeoMeta";
+
+const route = useRoute();
 
 interface Media {
   source_url: string;
@@ -40,9 +43,25 @@ watch(
   }
 );
 
+watch(
+  () => route,
+  () => {
+    useSeoMeta(82);
+  },
+  { immediate: true, deep: true }
+);
+
 onMounted(() => {
-  load(); // загрузим страницу 'procedure'
+  load(); // загрузим страницу
 });
+
+watch(
+  () => route,
+  () => {
+    useSeoMeta(1388);
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <style scoped lang="scss">

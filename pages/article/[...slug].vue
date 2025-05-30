@@ -110,6 +110,12 @@ onMounted(() => {
   pageUrl.value = window.location.href;
   load();
 });
+
+watchEffect(() => {
+  if (post.value?.id) {
+    useSeoMeta(post.value.id);
+  }
+});
 </script>
 
 <style lang="scss" scoped>

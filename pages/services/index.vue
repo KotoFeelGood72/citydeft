@@ -67,6 +67,10 @@ watch(
   },
   { immediate: true }
 );
+
+useHead({
+  title: "Услуги",
+});
 </script>
 
 <style lang="scss" scoped>

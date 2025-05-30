@@ -39,16 +39,11 @@ import productsCard from "@/components/templates/products-card.vue";
 import vFilter from "@/components/templates/v-filter.vue";
 import sectionTitle from "@/components/ui-kit/section-title.vue";
 
-interface EstateItem {
-  id: number;
-  [key: string]: any;
-}
-
 const route = useRoute();
 const page = ref(1);
 const pages = ref<number | null>(null);
-const estate = ref<EstateItem[]>([]);
-const filtered = ref<EstateItem[] | null>(null);
+const estate = ref<any[]>([]);
+const filtered = ref<any[] | null>(null);
 
 const result = async (currentPage?: number) => {
   const queryParams = {
@@ -69,11 +64,18 @@ const result = async (currentPage?: number) => {
 
 onMounted(() => {
   result();
+
+  console.log(estate);
 });
 
 watch(page, (newPage) => {
   result(newPage);
 });
+
+useHead({
+  title: "Недвижимость",
+});
+
 
 watch(
   () => route.fullPath,

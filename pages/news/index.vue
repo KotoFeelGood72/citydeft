@@ -35,6 +35,9 @@ const data = ref<any>([]);
 const page = ref(1);
 const pages = ref<number | null>(null);
 
+useHead({
+  title: "Новости",
+});
 const getNewsList = async (currentPage: number = page.value) => {
   try {
     const response = await api.get("/wp/v2/posts", {

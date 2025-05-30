@@ -66,8 +66,18 @@ import { ref, onMounted } from "vue";
 import sectionTitle from "../components/ui-kit/section-title.vue";
 import icons from "../components/icons/icons.vue";
 import { useOptionsStoreRefs } from "~/store/useOptionsStore";
-
+import { useRoute } from "vue-router";
+import { useSeoMeta } from "@/composables/useSeoMeta";
+const route = useRoute();
 const { options } = useOptionsStoreRefs();
+
+watch(
+  () => route,
+  () => {
+    useSeoMeta(854);
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <style scoped lang="scss">

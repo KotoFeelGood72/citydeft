@@ -46,27 +46,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, onMounted } from "vue";
+// import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { usePageContent } from "~/composables/usePageContent";
 import { api } from "~/api/api";
+import { useSeoMeta } from "@/composables/useSeoMeta";
 
 import SectionTitle from "@/components/ui-kit/section-title.vue";
 import icons from "@/components/icons/icons.vue";
 
-interface SocialItem {
-  network: "Facebook" | "Telegram" | "WhatsApp" | "VK" | "Odnoklassniki";
-  icon: string;
-}
-
 const route = useRoute();
-// usePageContent with resource 'posts'
 const { data: post, load } = usePageContent(route.params.slug as string, "posts");
 
 const img = ref<any>(null);
 const pageUrl = ref<string>("");
 
-const social: SocialItem[] = [
+useHead({
+  title: "Новости",
+});
+
+const social: any[] = [
   { network: "Facebook", icon: "facebook.svg" },
   { network: "Telegram", icon: "telegram.svg" },
   { network: "WhatsApp", icon: "whatsapp.svg" },
@@ -92,7 +91,6 @@ function shareLink(network: string) {
   }
 }
 
-// when post changes, fetch its featured image
 watch(
   () => post.value?.featured_media,
   async (mediaId) => {
@@ -106,9 +104,15 @@ watch(
   }
 );
 
-onMounted(() => {
+onMounted(async () => {
   pageUrl.value = window.location.href;
   load();
+});
+
+watchEffect(() => {
+  if (post.value?.id) {
+    useSeoMeta(post.value.id);
+  }
 });
 </script>
 
@@ -122,8 +126,6 @@ onMounted(() => {
 
 .article-head {
   margin-bottom: 4rem;
-  // @include flex-center;
-  // position: relative;
 
   @include bp($point_2) {
     flex-direction: column;

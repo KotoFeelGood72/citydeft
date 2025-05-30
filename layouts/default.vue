@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import yandex from "@/components/templates/yandex.vue";
+// import yandex from "@/components/templates/yandex.vue";
 import { useModalStoreRefs } from "~/store/useModalStore";
 import Header from "~/components/templates/Header.vue";
 import Footer from "~/components/templates/Footer.vue";

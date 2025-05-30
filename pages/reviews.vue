@@ -19,8 +19,19 @@ import { onMounted } from "vue";
 import SectionTitle from "@/components/ui-kit/section-title.vue";
 import CircleCard from "@/components/templates/circle-card.vue";
 import { usePageContent } from "@/composables/usePageContent";
+import { useRoute } from "vue-router";
+import { useSeoMeta } from "@/composables/useSeoMeta";
 
+const route = useRoute();
 const { data, load } = usePageContent("reviews");
+
+watch(
+  () => route,
+  () => {
+    useSeoMeta(856);
+  },
+  { immediate: true, deep: true }
+);
 
 onMounted(() => {
   load("reviews");

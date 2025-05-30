@@ -18,6 +18,7 @@
 <script>
 import productsCard from "@/components/templates/products-card";
 import sectionTitle from "@/components/ui-kit/section-title";
+
 // import { mapGetters } from "vuex";
 export default {
   components: {

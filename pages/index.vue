@@ -57,13 +57,16 @@ import actions from "@/components/blocks/actions.vue";
 import services from "@/components/blocks/services.vue";
 import questions from "@/components/blocks/questions.vue";
 import { useOptionsStoreRefs } from "~/store/useOptionsStore";
+import { useSeoMeta } from "@/composables/useSeoMeta";
 import { api } from "~/api/api";
+import { useRoute } from "vue-router";
 
 // Реактивные переменные
 const feature = ref<any>([]);
 const categories = ref<any>([]);
 // const data = ref<any | null>(null);
 const { options } = useOptionsStoreRefs();
+const route = useRoute();
 
 // Запросы к API
 const getFeature = async () => {
@@ -95,12 +98,20 @@ const getCategories = async () => {
 // };
 
 // Инициализация данных
-onMounted(() => {
+onMounted(async () => {
   getFeature();
   getCategories();
   // getContent();
   // console.log(options.value["action-block"]);
 });
+
+watch(
+  () => route,
+  () => {
+    useSeoMeta(82);
+  },
+  { immediate: true, deep: true }
+);
 </script>
 
 <style lang="scss" scoped>

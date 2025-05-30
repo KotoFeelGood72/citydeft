@@ -48,4 +48,8 @@ watch(
 onMounted(() => {
   load();
 });
+
+watchEffect(() => {
+  useSeoMeta(service?.value?.id);
+});
 </script>

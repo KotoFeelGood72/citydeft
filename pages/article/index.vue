@@ -81,6 +81,10 @@ watch(
 onMounted(() => {
   fetchPosts(page.value);
 });
+
+useHead({
+  title: "Статьи",
+});
 </script>
 
 <style scoped lang="scss">

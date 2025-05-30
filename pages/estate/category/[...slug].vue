@@ -96,6 +96,12 @@ onMounted(async () => {
     getCategory(res.id, page.value);
   }
 });
+
+watchEffect(() => {
+  if (pageName.value?.id) {
+    useSeoMeta(pageName.value.id, "category");
+  }
+});
 </script>
 
 <style lang="scss" scoped>
