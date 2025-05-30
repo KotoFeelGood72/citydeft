@@ -7,7 +7,11 @@
       </div>
       <div class="logo">
         <nuxt-link to="/">
-          <NuxtImg src="logo.png" loading="lazy" />
+          <NuxtImg
+            src="https://api.citydeft.com/wp-content/uploads/2025/05/logo.png"
+            alt="Логотип Deft Group"
+            loading="lazy"
+          />
         </nuxt-link>
       </div>
       <v-click-nav class="burger-nav" :nav="options" />

@@ -75,6 +75,7 @@ const { openModal } = useModalStore();
   height: 3.6rem;
   @include flex-center;
   position: relative;
+
   svg {
     width: 100%;
     height: 100%;
@@ -141,7 +142,7 @@ const { openModal } = useModalStore();
 
 .callback {
   @include bp($point_4) {
-    display: none;
+    display: none !important;
   }
 }
 </style>

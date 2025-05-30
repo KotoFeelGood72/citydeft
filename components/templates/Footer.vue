@@ -6,7 +6,11 @@
           <div class="footer-col__info">
             <div class="logo">
               <nuxt-link to="/">
-                <NuxtImg src="logo.png" alt="" loading="lazy" />
+                <NuxtImg
+                  src="https://api.citydeft.com/wp-content/uploads/2025/05/logo.png"
+                  alt="Логотип Deft Group"
+                  loading="lazy"
+                />
               </nuxt-link>
             </div>
             <div class="footer_info__descr">{{ $t("brandShort") }}</div>
