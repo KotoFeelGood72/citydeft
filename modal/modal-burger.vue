@@ -10,7 +10,8 @@
           <NuxtImg src="logo.png" loading="lazy" />
         </nuxt-link>
       </div>
-      <v-click-nav class="burger-nav" :nav="modal" />
+      <v-click-nav class="burger-nav" :nav="options" />
+      <switchLang class="burger-switch" />
     </div>
   </div>
 </template>
@@ -19,6 +20,10 @@
 import { useModalStore } from "~/store/useModalStore";
 import vClickNav from "../components/ui-kit/v-click-nav.vue";
 import icons from "../components/icons/icons.vue";
+import { useOptionsStoreRefs } from "~/store/useOptionsStore";
+import switchLang from "~/components/ui-kit/switch-lang.vue";
+
+const { options } = useOptionsStoreRefs();
 
 interface Props {
   modal: any;
@@ -54,6 +59,7 @@ const { closeAllModals } = useModalStore();
   height: 100%;
   max-width: 40rem;
   padding: 3rem;
+  overflow: hidden;
 }
 
 .logo {

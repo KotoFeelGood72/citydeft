@@ -2,7 +2,7 @@
   <div class="top-header">
     <div class="container">
       <div class="top-header__main">
-        <switchLang />
+        <switchLang class="desktop-switch" />
         <div class="right">
           <ul class="social-list">
             <li v-for="(item, i) in socials" :key="'social-' + i">
@@ -55,6 +55,11 @@ const socials = ref<any>([
   @include flex-space;
 }
 
+.desktop-switch {
+  @include bp($point_2) {
+    display: none;
+  }
+}
 .social-list,
 .contacts-list {
   @include flex-start;

@@ -120,4 +120,19 @@ function selectLang(lang) {
   background-color: #e6f0ff;
   font-weight: bold;
 }
+
+.burger-switch {
+  width: 100%;
+  margin-top: 2rem;
+  margin-left: -2rem;
+  .selected-lang {
+    border: none;
+    padding: 1.6rem 2rem;
+    font-size: 2.4rem;
+  }
+
+  .arrow {
+    font-size: 2rem;
+  }
+}
 </style>
