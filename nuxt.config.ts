@@ -34,6 +34,8 @@ export default defineNuxtConfig({
     strategy: "prefix_except_default",
   },
 
+  plugins: ["~/plugins/vue-awesome-paginate"],
+
   app: {
     head: {
       titleTemplate: "%s - CityDeft",

@@ -9,9 +9,8 @@
             <ArticleCard :data="item" />
           </li>
         </ul>
-
+        <!-- 
         <VueAwesomePaginate
-          v-if="totalPages > 1"
           :page-count="totalPages"
           :click-handler="onPageChange"
           :page-range="3"
@@ -22,7 +21,9 @@
           active-page-class="paginate-page--active"
           prev-class="paginate-prev"
           next-class="paginate-next"
-        />
+        /> -->
+
+        <Pagination v-model="page" :total-pages="totalPages" :max-visible-pages="5" />
       </div>
     </div>
   </div>
@@ -35,6 +36,7 @@ import SectionTitle from "~/components/ui-kit/section-title.vue";
 import ArticleCard from "~/components/templates/article-card.vue";
 import VueAwesomePaginate from "vue-awesome-paginate";
 import "vue-awesome-paginate/dist/style.css";
+import Pagination from "~/components/ui-kit/Pagination.vue";
 import { api } from "~/api/api";
 
 const route = useRoute();
@@ -42,6 +44,7 @@ const router = useRouter();
 
 const page = ref(parseInt(route.query.page as string) || 1);
 const totalPages = ref(0);
+const currentPage = ref(0);
 const posts = ref<any[]>([]);
 
 async function fetchPosts(pageNum = page.value) {

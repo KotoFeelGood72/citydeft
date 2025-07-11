@@ -1,76 +1,47 @@
 <template>
   <div class="card">
-    <div class="card-img">
-      <NuxtImg
-        :src="data._embedded['wp:featuredmedia'][0].source_url"
-        :alt="data._embedded['wp:featuredmedia'][0].alt_text"
-        loading="lazy"
-      />
+    <div class="card-img" v-if="imageSrc">
+      <NuxtImg :src="imageSrc" :alt="imageAlt" loading="lazy" />
     </div>
+
     <div class="card-content">
-      <section-title :title="data.title.rendered" class="small" :level="3" />
+      <SectionTitle :title="data.title.rendered" class="small" :level="3" />
       <div v-html="trimmedText"></div>
-      <nuxt-link :to="data.slug">{{ $t("ui.morePost") }}</nuxt-link>
+      <NuxtLink :to="`/blog/${data.slug}`">{{ $t("ui.morePost") }}</NuxtLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// import { ref, computed, watch, onMounted } from "vue";
-// import { api } from "~/api/api";
-import sectionTitle from "../ui-kit/section-title.vue";
-
-// interface PostData {
-//   title: { rendered: string };
-//   excerpt: { rendered: string };
-//   slug: string;
-//   featured_media: number;
-// }
-
-// interface MediaData {
-//   source_url: string;
-//   alt_text: string;
-// }
+import { computed } from "vue";
+import SectionTitle from "../ui-kit/section-title.vue";
 
 const props = defineProps<{
-  data: any;
+  data: {
+    title: { rendered: string };
+    excerpt?: { rendered: string };
+    slug: string;
+    _embedded?: {
+      "wp:featuredmedia"?: Array<{
+        source_url: string;
+        alt_text: string;
+      }>;
+    };
+  };
 }>();
 
-// const img = ref<MediaData | null>(null);
-
-// const getPostImg = async () => {
-//   try {
-//     const res = await api.get(`/wp/v2/media/${props.data.featured_media}`);
-//     img.value = res as any;
-//   } catch (error) {
-//     console.error("Ошибка загрузки изображения:", error);
-//   }
-// };
+const image = computed(() => props.data._embedded?.["wp:featuredmedia"]?.[0]);
+const imageSrc = computed(() => image.value?.source_url || null);
+const imageAlt = computed(() => image.value?.alt_text || "");
 
 const trimmedText = computed(() => {
-  const maxLength = 120;
-  const raw = props.data.excerpt?.rendered;
-  if (!raw) return "";
+  const raw = props.data.excerpt?.rendered || "";
+  const clean = raw.replace(/<\/?[^>]+(>|$)/g, ""); // убрать HTML-теги
+  const ellipsisIndex = clean.indexOf(" […]");
 
-  let result = raw.substring(0, maxLength);
-  const ellipsisIndex = result.indexOf(" […]");
-  if (ellipsisIndex !== -1) result = result.substring(0, ellipsisIndex);
-
-  if (raw.length > maxLength) result += "…";
-  return result;
+  let short = ellipsisIndex !== -1 ? clean.substring(0, ellipsisIndex) : clean;
+  return short.length > 120 ? short.substring(0, 120) + "…" : short;
 });
-
-// watch(
-//   () => props.data,
-//   () => {
-//     getPostImg();
-//   },
-//   { immediate: true, deep: true }
-// );
-
-// onMounted(() => {
-//   getPostImg();
-// });
 </script>
 
 <style lang="scss" scoped>
@@ -96,6 +67,9 @@ img {
   font-weight: 400;
   color: $dark-light;
 
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   h3 {
     color: $dark;
     font-family: $font_1;

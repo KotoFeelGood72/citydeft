@@ -37,12 +37,12 @@ const pages = ref<any>(null);
 
 const getNewsList = async (currentPage: number = page.value) => {
   try {
-    const response = await api.get("/wp-json/wp/v2/service", {
+    const response = await api.get("/wp/v2/service", {
       params: {
         per_page: 6,
         page: currentPage,
         categories: 1,
-        _embed: "wp:term",
+        _embed: true,
       },
     });
     pages.value = parseInt(response.headers["x-wp-totalpages"]);
