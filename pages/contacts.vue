@@ -1,37 +1,34 @@
 <template>
   <div class="contacts" v-if="options">
     <div class="container">
-      <section-title title="Контакты" class="big center" />
+      <section-title :title="$t('ui.contactsTitle')" class="big center" />
       <div class="contacts_main">
         <div class="contacts__info">
           <ul>
             <li>
-              <span>Мы работаем:</span>
+              <span>{{ $t("ui.itsWork") }}:</span>
               <p>
-                Понедельник–пятница —<br />
-                с 09:00 до 18:00<br />
-                суббота — с 09:00 до 15:30<br />
-                воскресенье — выходной
+                {{ $t("ui.itsWork") }} —<br />
+                {{ $t("ui.dayStartTime") }}<br />
+                {{ $t("ui.dayEndTime") }}<br />
+                {{ $t("ui.dayEnd") }}
               </p>
             </li>
             <li>
-              <span>Телефон:</span>
-              <a :href="`tel:${options.contacts.phone}`">{{ options.contacts.phone }}</a>
-              <p>На связи 24/7</p>
-              <ul class="social">
-                <li />
-              </ul>
+              <span>{{ $t("ui.phone") }}:</span>
+              <a :href="`tel:+905077060007`">+90 507 706 00 07</a>
+              <p>{{ $t("ui.online") }} 24/7</p>
             </li>
             <li>
-              <span>Электронная почта:</span>
-              <a :href="`mailto:${options.contacts.mail}`">{{ options.contacts.mail }}</a>
+              <span>{{ $t("ui.email") }}:</span>
+              <a :href="`mailto:info@citydeft.com`">info@citydeft.com</a>
             </li>
             <li>
-              <span>Наш офис:</span>
+              <span>{{ $t("ui.office") }}:</span>
               <p>Saray Mah. Oral Cad. 25/B Öztürk 2 Apt. Alanya / Antalya</p>
             </li>
             <li>
-              <span>Мы в социальных сетях:</span>
+              <span>{{ $t("socialName") }}:</span>
               <ul class="contacts-social">
                 <li
                   v-for="(item, i) in options.contacts.social"
@@ -62,7 +59,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
 import sectionTitle from "../components/ui-kit/section-title.vue";
 import icons from "../components/icons/icons.vue";
 import { useOptionsStoreRefs } from "~/store/useOptionsStore";

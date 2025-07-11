@@ -7,8 +7,8 @@
 <script lang="ts" setup>
 const props = withDefaults(
   defineProps<{
-    title?: string;
-    level?: number;
+    title?: any;
+    level?: any;
   }>(),
   {
     title: "",

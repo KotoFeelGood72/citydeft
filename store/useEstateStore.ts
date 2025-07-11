@@ -12,6 +12,7 @@ export const useEstateStore = defineStore("estates", {
     one: null as any,
     loading: false,
     error: null as unknown,
+    categories: null as any,
   }),
 
   actions: {
@@ -20,6 +21,17 @@ export const useEstateStore = defineStore("estates", {
      *  filters — любой набор query-параметров REST
      *  opts    — page / per_page / lang перегружают дефолты
      * ------------------------------------------------------------------ */
+
+    async getCategories(locale: any) {
+      try {
+        const response = await api.get(
+          `/wp/v2/estate_categories?lang=${locale}`
+        );
+        this.categories = response.data;
+      } catch (error) {
+        console.error("Ошибка при загрузке категорий:", error);
+      }
+    },
     async fetchEstates(
       filters: any = {},
       opts: { page?: number; per_page?: number; lang?: string } = {}

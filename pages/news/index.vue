@@ -2,7 +2,7 @@
   <div class="articles">
     <div class="container">
       <div class="articles-main">
-        <section-title title="Новости" class="big" :level="1" />
+        <section-title :title="$t('ui.newsTitle')" class="big" :level="1" />
         <ul class="articles-list grid-3">
           <li v-for="(item, i) in data" :key="'news-item-' + i">
             <article-card :data="item" />
@@ -45,7 +45,7 @@ const getNewsList = async (currentPage: number = page.value) => {
         per_page: 6,
         page: currentPage,
         categories: 1,
-        _embed: "wp:term",
+        _embed: true,
       },
     });
     pages.value = parseInt(response.headers["x-wp-totalpages"]);

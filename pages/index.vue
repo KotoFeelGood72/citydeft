@@ -6,7 +6,7 @@
       <div class="container">
         <div class="feature-house__main">
           <div class="feature-house__top">
-            <section-title :level="3" title="Лучшие предложения" class="big" />
+            <section-title :level="3" :title="$t('ui.salesTitle')" class="big" />
             <nuxt-link to="/estate">{{ $t("ui.more") }}</nuxt-link>
           </div>
           <ul class="feature-list grid-3">
@@ -22,10 +22,11 @@
       <div class="container">
         <div class="home-cat__main">
           <div class="home-cat-top">
-            <section-title title="Недвижимость по категориям" :level="3" class="big-xl" />
-            <p>{{ $t("ui.titleCat") }}</p>
+            <section-title :title="$t('ui.titleCat')" :level="3" class="big-xl" />
+            <p>{{ $t("ui.titleText") }}</p>
           </div>
-          <ul class="home-cat__list" v-if="categories.length">
+          <!-- {{ categories }} -->
+          <ul class="home-cat__list">
             <li v-for="item in categories" :key="'categories-' + item.id">
               <nuxt-link :to="`/estate/category/${item.slug}`">
                 <NuxtImg v-if="item.acf?.img" :src="item.acf.img" alt="" loading="lazy" />
@@ -56,27 +57,20 @@ import services from "@/components/blocks/services.vue";
 import questions from "@/components/blocks/questions.vue";
 import { useOptionsStoreRefs } from "~/store/useOptionsStore";
 import { useSeoMeta } from "@/composables/useSeoMeta";
-import { api } from "~/api/api";
 import { useRoute } from "vue-router";
 import { useEstateStore, useEstateStoreRefs } from "~/store/useEstateStore";
+import { useI18n } from "#imports";
 
-const categories = ref<any>([]);
+const { locale } = useI18n();
+
+// const categories = ref<any>([]);
 const { options } = useOptionsStoreRefs();
-const { fetchEstates } = useEstateStore();
-const { allList } = useEstateStoreRefs();
+const { fetchEstates, getCategories } = useEstateStore();
+const { allList, categories } = useEstateStoreRefs();
 const route = useRoute();
 
-const getCategories = async () => {
-  try {
-    const response = await api.get("/wp/v2/estate_categories/");
-    categories.value = response.data;
-  } catch (error) {
-    console.error("Ошибка при загрузке категорий:", error);
-  }
-};
-
 onMounted(async () => {
-  getCategories();
+  getCategories(locale.value);
   await fetchEstates({ meta: 2, posts_per_page: 3 });
 });
 

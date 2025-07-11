@@ -1,47 +1,51 @@
 <template>
   <div class="card">
     <div class="card-img">
-      <NuxtImg v-if="img" :src="img.source_url" :alt="img.alt_text" loading="lazy" />
+      <NuxtImg
+        :src="data._embedded['wp:featuredmedia'][0].source_url"
+        :alt="data._embedded['wp:featuredmedia'][0].alt_text"
+        loading="lazy"
+      />
     </div>
     <div class="card-content">
       <section-title :title="data.title.rendered" class="small" :level="3" />
       <div v-html="trimmedText"></div>
-      <nuxt-link :to="data.slug">Читать полностью</nuxt-link>
+      <nuxt-link :to="data.slug">{{ $t("ui.morePost") }}</nuxt-link>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue";
-import { api } from "~/api/api";
+// import { ref, computed, watch, onMounted } from "vue";
+// import { api } from "~/api/api";
 import sectionTitle from "../ui-kit/section-title.vue";
 
-interface PostData {
-  title: { rendered: string };
-  excerpt: { rendered: string };
-  slug: string;
-  featured_media: number;
-}
+// interface PostData {
+//   title: { rendered: string };
+//   excerpt: { rendered: string };
+//   slug: string;
+//   featured_media: number;
+// }
 
-interface MediaData {
-  source_url: string;
-  alt_text: string;
-}
+// interface MediaData {
+//   source_url: string;
+//   alt_text: string;
+// }
 
 const props = defineProps<{
-  data: PostData;
+  data: any;
 }>();
 
-const img = ref<MediaData | null>(null);
+// const img = ref<MediaData | null>(null);
 
-const getPostImg = async () => {
-  try {
-    const res = await api.get(`/wp/v2/media/${props.data.featured_media}`);
-    img.value = res as any;
-  } catch (error) {
-    console.error("Ошибка загрузки изображения:", error);
-  }
-};
+// const getPostImg = async () => {
+//   try {
+//     const res = await api.get(`/wp/v2/media/${props.data.featured_media}`);
+//     img.value = res as any;
+//   } catch (error) {
+//     console.error("Ошибка загрузки изображения:", error);
+//   }
+// };
 
 const trimmedText = computed(() => {
   const maxLength = 120;
@@ -56,17 +60,17 @@ const trimmedText = computed(() => {
   return result;
 });
 
-watch(
-  () => props.data,
-  () => {
-    getPostImg();
-  },
-  { immediate: true, deep: true }
-);
+// watch(
+//   () => props.data,
+//   () => {
+//     getPostImg();
+//   },
+//   { immediate: true, deep: true }
+// );
 
-onMounted(() => {
-  getPostImg();
-});
+// onMounted(() => {
+//   getPostImg();
+// });
 </script>
 
 <style lang="scss" scoped>

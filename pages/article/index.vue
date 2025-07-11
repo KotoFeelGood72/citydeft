@@ -2,7 +2,7 @@
   <div class="articles">
     <div class="container">
       <div class="articles-main">
-        <SectionTitle title="Статьи" class="big" :level="1" />
+        <SectionTitle :title="$t('ui.articlesTitle')" class="big" :level="1" />
 
         <ul class="articles-list grid-3">
           <li v-for="(item, i) in posts" :key="`news-item-${i}`">
@@ -51,7 +51,7 @@ async function fetchPosts(pageNum = page.value) {
         per_page: 6,
         page: pageNum,
         categories: 11,
-        _embed: "wp:term",
+        _embed: true,
       },
     });
     posts.value = res.data;

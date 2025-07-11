@@ -1,10 +1,10 @@
 <template>
-  <div class="vacancy" v-if="data && data[0]">
+  <div class="vacancy">
     <div class="container">
       <div class="vacancy__main">
-        <section-title title="Отзывы" class="big" :level="1" />
-        <ul class="vacancy__list" v-if="data[0]?.acf">
-          <li v-for="(item, i) in data[0].acf?.reviews" :key="`vacancy-item-${i}`">
+        <section-title :title="$t('ui.reviewsTitle')" class="big" :level="1" />
+        <ul class="vacancy__list" v-if="data?.acf">
+          <li v-for="(item, i) in data?.acf?.reviews" :key="`vacancy-item-${i}`">
             <circle-card :data="item" />
           </li>
         </ul>
