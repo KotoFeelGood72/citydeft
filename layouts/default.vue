@@ -24,11 +24,10 @@ import Footer from "~/components/templates/Footer.vue";
 import actions from "~/components/blocks/actions.vue";
 import modalForm from "~/modal/modal-form.vue";
 import modalBurger from "~/modal/modal-burger.vue";
-import { api } from "~/api/api";
 import { useRoute } from "vue-router";
-import { useOptionsStore } from "~/store/useOptionsStore";
+// import { useOptionsStore } from "~/store/useOptionsStore";
 
-const { getOptions } = useOptionsStore();
+// const { getOptions } = useOptionsStore();
 const route = useRoute();
 const { modals } = useModalStoreRefs();
 
@@ -43,9 +42,9 @@ const isFormPages = computed(() => {
 
 const data = ref<any>(null);
 
-onMounted(() => {
-  getOptions();
-});
+// onMounted(() => {
+//   getOptions();
+// });
 </script>
 
 <style lang="scss" scoped></style>

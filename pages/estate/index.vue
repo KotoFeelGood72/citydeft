@@ -76,7 +76,6 @@ useHead({
   title: "Недвижимость",
 });
 
-
 watch(
   () => route.fullPath,
   () => {

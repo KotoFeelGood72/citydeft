@@ -1,6 +1,6 @@
 <template>
   <div class="input" :class="{ error }">
-    <label :for="id" v-if="label">{{ label }}</label>
+    <label v-if="label">{{ label }}</label>
     <div class="input__w">
       <span class="minilabel" v-if="minilabel">{{ minilabel }}</span>
       <input
@@ -9,18 +9,15 @@
         :placeholder="place"
         :max="max"
         :min="min"
-        :id="id"
         @input="onInput"
         :value="value"
       />
-      <!-- v-mask="'+##-###-###-##-##'" -->
       <input
         v-else
         :type="type"
         :placeholder="place"
         :max="max"
         :min="min"
-        :id="id"
         @input="onInput"
         :value="value"
       />
@@ -37,7 +34,6 @@ const props = defineProps<{
   max?: number | string;
   min?: number | string;
   label?: string;
-  id: string;
   minilabel?: string;
   mask?: boolean;
   error?: boolean;

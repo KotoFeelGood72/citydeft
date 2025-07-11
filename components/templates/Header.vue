@@ -14,7 +14,7 @@
         </div>
         <v-nav class="header-navs" />
         <div class="actions">
-          <v-btn name="Связаться" @click="openModal('form')" class="callback" />
+          <v-btn :name="$t('ui.callback')" @click="openModal('form')" class="callback" />
           <nuxt-link to="/favorite" class="hearth-link">
             <icons icon="mdi:heart" />
             <div class="counter" v-if="likes && likes.length">{{ likes?.length }}</div>

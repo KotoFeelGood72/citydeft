@@ -71,7 +71,7 @@ function selectLang(lang) {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.6rem 1.2rem;
+    padding: 0.2rem 1rem;
     border: 0.1rem solid #ccc;
     border-radius: 6px;
     background-color: white;
