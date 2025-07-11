@@ -9,19 +9,6 @@
             <ArticleCard :data="item" />
           </li>
         </ul>
-        <!-- 
-        <VueAwesomePaginate
-          :page-count="totalPages"
-          :click-handler="onPageChange"
-          :page-range="3"
-          :prev-text="'‹‹'"
-          :next-text="'››'"
-          container-class="global-paginate"
-          page-class="paginate-page"
-          active-page-class="paginate-page--active"
-          prev-class="paginate-prev"
-          next-class="paginate-next"
-        /> -->
 
         <Pagination v-model="page" :total-pages="totalPages" :max-visible-pages="5" />
       </div>
@@ -34,8 +21,6 @@ import { ref, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import SectionTitle from "~/components/ui-kit/section-title.vue";
 import ArticleCard from "~/components/templates/article-card.vue";
-import VueAwesomePaginate from "vue-awesome-paginate";
-import "vue-awesome-paginate/dist/style.css";
 import Pagination from "~/components/ui-kit/Pagination.vue";
 import { api } from "~/api/api";
 

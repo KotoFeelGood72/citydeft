@@ -8,15 +8,7 @@
             <article-card :data="item" />
           </li>
         </ul>
-        <paginate
-          v-if="pages && pages > 1"
-          :page-count="pages"
-          :page-range="3"
-          v-model="page"
-          :container-class="'global-paginate'"
-          :prev-class="'paginate-prev'"
-          :next-class="'paginate-next'"
-        />
+        <Pagination v-model="page" :total-pages="pages" :max-visible-pages="5" />
       </div>
     </div>
   </div>
@@ -26,6 +18,7 @@
 import { ref, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { api } from "~/api/api";
+import Pagination from "~/components/ui-kit/Pagination.vue";
 
 import sectionTitle from "@/components/ui-kit/section-title.vue";
 import articleCard from "@/components/templates/article-card.vue";

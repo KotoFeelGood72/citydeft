@@ -12,24 +12,20 @@
       <modal-burger v-if="activeModal === 'burger'" :modal="data" />
     </transition>
     <Footer />
-    <!-- <yandex /> -->
   </div>
 </template>
 
 <script lang="ts" setup>
-// import yandex from "@/components/templates/yandex.vue";
-import { useModalStoreRefs } from "~/store/useModalStore";
+import { useModalStoreRefs, useModalStore } from "~/store/useModalStore";
 import Header from "~/components/templates/Header.vue";
 import Footer from "~/components/templates/Footer.vue";
 import actions from "~/components/blocks/actions.vue";
 import modalForm from "~/modal/modal-form.vue";
 import modalBurger from "~/modal/modal-burger.vue";
 import { useRoute } from "vue-router";
-// import { useOptionsStore } from "~/store/useOptionsStore";
-
-// const { getOptions } = useOptionsStore();
 const route = useRoute();
 const { modals } = useModalStoreRefs();
+const { closeAllModals } = useModalStore();
 
 const activeModal = computed(() => {
   return Object.entries(modals.value).find(([_, isActive]) => isActive)?.[0] || null;
@@ -42,9 +38,10 @@ const isFormPages = computed(() => {
 
 const data = ref<any>(null);
 
-// onMounted(() => {
-//   getOptions();
-// });
+watch(
+  () => route.path,
+  () => closeAllModals()
+);
 </script>
 
 <style lang="scss" scoped></style>

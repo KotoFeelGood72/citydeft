@@ -10,14 +10,7 @@
               <products-card :data="item" />
             </li>
           </ul>
-          <paginate
-            v-if="pages && pages > 1"
-            :page-count="pages"
-            v-model="page"
-            :container-class="'global-paginate'"
-            :prev-class="'paginate-prev'"
-            :next-class="'paginate-next'"
-          />
+          <Pagination v-model="page" :total-pages="pages" :max-visible-pages="5" />
         </div>
       </div>
     </div>
@@ -31,23 +24,12 @@ import { api } from "~/api/api";
 import productsCard from "@/components/templates/products-card.vue";
 import vFilter from "@/components/templates/v-filter.vue";
 import sectionTitle from "@/components/ui-kit/section-title.vue";
-
-interface EstateItem {
-  id: number;
-  title: string;
-  [key: string]: any;
-}
-
-interface PageName {
-  id: number;
-  name: string;
-  [key: string]: any;
-}
+import Pagination from "~/components/ui-kit/Pagination.vue";
 
 const page = ref(1);
-const pages = ref<number | null>(null);
-const estate = ref<EstateItem[]>([]);
-const pageName = ref<PageName | null>(null);
+const pages = ref<any>(1);
+const estate = ref<any>([]);
+const pageName = ref<any>(null);
 
 const route = useRoute();
 const router = useRouter();
