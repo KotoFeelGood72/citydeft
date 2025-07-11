@@ -9,9 +9,16 @@ export const useOptionsStore = defineStore("options", {
   actions: {
     async getOptions() {
       try {
-        const response = await api.get("/acf/v3/options/options");
-        this.options = response.data.acf;
-      } catch (error) {}
+        const { locale } = useI18n();
+        const lang = locale.value;
+        const { data } = await api.get("/site/v1/options", {
+          params: { lang: locale.value },
+        });
+
+        this.options = data.acf;
+      } catch (e) {
+        console.error("options fetch error:", e);
+      }
     },
   },
 });

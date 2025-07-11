@@ -19,7 +19,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, watch } from "vue";
 import icons from "../icons/icons.vue";
+const { rt } = useI18n();
 const props = defineProps<{
   options: any;
   modelValue: any;
@@ -29,6 +31,17 @@ const emit = defineEmits<{
   (e: "update:modelValue", v: string | null): void;
 }>();
 
+watch(
+  () => props.options,
+  (opts) => {
+    if ((!props.modelValue || props.modelValue === "") && opts?.length) {
+      emit("update:modelValue", rt(opts[0].name)); // value = перевод
+    }
+  },
+  { immediate: true }
+);
+
+/* обычное двустороннее связывание */
 const localValue = computed({
   get: () => props.modelValue,
   set: (v) => emit("update:modelValue", v),

@@ -12,8 +12,8 @@
         :id="id"
         @input="onInput"
         :value="value"
-        v-mask="'+##-###-###-##-##'"
       />
+      <!-- v-mask="'+##-###-###-##-##'" -->
       <input
         v-else
         :type="type"

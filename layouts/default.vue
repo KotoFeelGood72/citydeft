@@ -12,7 +12,7 @@
       <modal-burger v-if="activeModal === 'burger'" :modal="data" />
     </transition>
     <Footer />
-    <yandex />
+    <!-- <yandex /> -->
   </div>
 </template>
 
@@ -26,10 +26,9 @@ import modalForm from "~/modal/modal-form.vue";
 import modalBurger from "~/modal/modal-burger.vue";
 import { api } from "~/api/api";
 import { useRoute } from "vue-router";
-import { useOptionsStore, useOptionsStoreRefs } from "~/store/useOptionsStore";
+import { useOptionsStore } from "~/store/useOptionsStore";
 
 const { getOptions } = useOptionsStore();
-const { options } = useOptionsStoreRefs();
 const route = useRoute();
 const { modals } = useModalStoreRefs();
 
@@ -44,13 +43,7 @@ const isFormPages = computed(() => {
 
 const data = ref<any>(null);
 
-const getContent = async () => {
-  const res = await api.get("/acf/v3/options/options");
-  data.value = res;
-};
-
 onMounted(() => {
-  // getContent();
   getOptions();
 });
 </script>

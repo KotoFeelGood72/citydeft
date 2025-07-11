@@ -13,20 +13,8 @@
             :key="'slides-' + i"
           >
             <nuxt-link :to="item.link">
-              <NuxtImg
-                class="desktop"
-                v-if="item.img"
-                :src="item.img"
-                alt=""
-                loading="lazy"
-              />
-              <NuxtImg
-                class="mobile"
-                v-if="item.mobile"
-                :src="item.mobile"
-                alt=""
-                loading="lazy"
-              />
+              <NuxtImg class="desktop" v-if="item.img" :src="item.img" />
+              <NuxtImg class="mobile" v-if="item.mobile" :src="item.mobile" />
             </nuxt-link>
           </SwiperSlide>
         </Swiper>
@@ -39,13 +27,10 @@
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
-import { useOptionsStoreRefs } from "~/store/useOptionsStore";
 
 defineProps<{
   saleSlider: any;
 }>();
-
-const { options } = useOptionsStoreRefs();
 
 const sliderOptions = {
   speed: 700,

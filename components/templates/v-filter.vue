@@ -170,8 +170,12 @@ const searchEvent = () => {
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   position: relative;
   z-index: 11;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
   @include bp($point_4) {
-    padding: 2.5rem;
+    padding: 1.5rem;
+    border-radius: 0.8rem;
   }
 }
 
@@ -180,21 +184,10 @@ const searchEvent = () => {
   @include flex-start;
   flex-wrap: wrap;
   align-items: flex-start;
-  margin: -2rem -2rem 2rem 0;
-  @include bp($point_4) {
-    margin: -2rem -2rem 0 0;
+  gap: 2rem;
+  @include bp($point_2) {
+    gap: 1rem;
   }
-  & > div {
-    padding: 2rem 2rem 0 0;
-    flex-grow: 1;
-    @include bp($point_4) {
-      padding: 2rem 2rem 0 0;
-    }
-  }
-}
-
-.medium {
-  margin: 3.2rem 0 2rem 0;
 }
 
 .label-input__group {
@@ -206,6 +199,7 @@ const searchEvent = () => {
   @include bp($point_4) {
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
+    text-align: left;
   }
 }
 
@@ -218,21 +212,10 @@ const searchEvent = () => {
 .filter-bottom {
   @include flex-end;
   flex-wrap: wrap;
-  margin: -4rem -4rem 0 0;
+  gap: 2rem;
   font-family: $font_2;
   font-weight: 400;
   font-size: 1.4rem;
-  @include bp($point_4) {
-    margin: -2rem -2rem 0 0;
-    padding-top: 2rem;
-    justify-content: space-between;
-  }
-  & > li {
-    padding: 4rem 4rem 0 0;
-    @include bp($point_4) {
-      padding: 2rem 2rem 0 0;
-    }
-  }
 }
 
 .filter-more {
@@ -273,34 +256,38 @@ const searchEvent = () => {
   @include bp($point_4) {
     justify-content: space-between;
   }
-  .filter-col {
-    @include bp($point_4) {
-      max-width: 50%;
-    }
-  }
+  // .filter-col {
+  //   @include bp($point_4) {
+  //     max-width: 50%;
+  //   }
+  // }
 }
 
 .filter-top {
-  .filter-col {
-    @include bp($point_4) {
-      max-width: 100%;
-      width: 100%;
-    }
-    &:nth-child(2) {
-      @include bp($point_4) {
-        max-width: 50%;
-      }
-    }
-    &:nth-child(3) {
-      @include bp($point_4) {
-        max-width: 50%;
-      }
-    }
-  }
+  // .filter-col {
+  //   @include bp($point_4) {
+  //     max-width: 100%;
+  //     width: 100%;
+  //   }
+  //   &:nth-child(2) {
+  //     @include bp($point_4) {
+  //       max-width: 50%;
+  //     }
+  //   }
+  //   &:nth-child(3) {
+  //     @include bp($point_4) {
+  //       max-width: 50%;
+  //     }
+  //   }
+  // }
 }
 
 .filter_col__label {
   font-size: 1.4rem;
   margin-bottom: 1rem;
+}
+
+.filter-col {
+  flex-grow: 1;
 }
 </style>

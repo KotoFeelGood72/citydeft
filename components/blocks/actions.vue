@@ -3,17 +3,17 @@
     <div class="container">
       <div class="actions_main">
         <div class="actions_content">
-          <section-title :title="data['action-block'].title" :level="3" class="big-xl" />
+          <section-title :title="$t('ui.action.title')" :level="3" class="big-xl" />
           <p class="description" :class="{ 'form-description': forms }">
-            {{ data["action-block"].txt }}
+            {{ $t("ui.action.txt") }}
           </p>
           <component v-if="forms" :is="vForm" class="actions-form" :data="optionsForm" />
           <v-btn
             v-else
-            name="Узнать больше"
+            :name="$t('ui.action.btn')"
             icon="bi:chevron-right"
             class="big-name"
-            @click="router.push(data['action-block'].link)"
+            @click="router.push('/estate')"
           />
         </div>
         <div class="actions__img">

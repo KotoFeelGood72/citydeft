@@ -7,10 +7,10 @@
         <div class="feature-house__main">
           <div class="feature-house__top">
             <section-title :level="3" title="Лучшие предложения" class="big" />
-            <nuxt-link to="/estate">Смотреть все</nuxt-link>
+            <nuxt-link to="/estate">{{ $t("ui.more") }}</nuxt-link>
           </div>
           <ul class="feature-list grid-3">
-            <li v-for="(item, i) in feature" :key="'product-' + i">
+            <li v-for="(item, i) in allList" :key="'product-' + i">
               <products-card :data="item" />
             </li>
           </ul>
@@ -23,7 +23,7 @@
         <div class="home-cat__main">
           <div class="home-cat-top">
             <section-title title="Недвижимость по категориям" :level="3" class="big-xl" />
-            <p>Подборка недвижимости в Турции</p>
+            <p>{{ $t("ui.titleCat") }}</p>
           </div>
           <ul class="home-cat__list" v-if="categories.length">
             <li v-for="item in categories" :key="'categories-' + item.id">
@@ -36,13 +36,11 @@
         </div>
       </div>
     </div>
-    <!-- <template v-if="options">
-      <template v-if="options['action-block']">
-        <actions class="home-about" :data="options['action-block']" />
-      </template>
-    </template> -->
+    <template v-if="options && options['action-block']">
+      <actions class="home-about" :data="options['action-block']" :forms="false" />
+    </template>
 
-    <!-- <services class="home-services" :data="data.acf" /> -->
+    <services class="home-services" :data="options" />
     <questions class="home-questions" />
   </div>
 </template>
@@ -60,24 +58,13 @@ import { useOptionsStoreRefs } from "~/store/useOptionsStore";
 import { useSeoMeta } from "@/composables/useSeoMeta";
 import { api } from "~/api/api";
 import { useRoute } from "vue-router";
+import { useEstateStore, useEstateStoreRefs } from "~/store/useEstateStore";
 
-// Реактивные переменные
-const feature = ref<any>([]);
 const categories = ref<any>([]);
-// const data = ref<any | null>(null);
 const { options } = useOptionsStoreRefs();
+const { fetchEstates } = useEstateStore();
+const { allList } = useEstateStoreRefs();
 const route = useRoute();
-
-// Запросы к API
-const getFeature = async () => {
-  try {
-    const response = await api.get("/wp/v2/estate?meta=2");
-    feature.value = response.data;
-    console.log(response.data);
-  } catch (error) {
-    console.error("Ошибка при загрузке feature:", error);
-  }
-};
 
 const getCategories = async () => {
   try {
@@ -88,21 +75,9 @@ const getCategories = async () => {
   }
 };
 
-// const getContent = async () => {
-//   try {
-//     const res = await api.get("/acf/v3/options/options");
-//     data.value = res.data;
-//   } catch (error) {
-//     console.error("Ошибка при загрузке контента:", error);
-//   }
-// };
-
-// Инициализация данных
 onMounted(async () => {
-  getFeature();
   getCategories();
-  // getContent();
-  // console.log(options.value["action-block"]);
+  await fetchEstates({ meta: 2, posts_per_page: 3 });
 });
 
 watch(
