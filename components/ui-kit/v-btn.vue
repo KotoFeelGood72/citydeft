@@ -1,18 +1,24 @@
 <template>
-  <div class="button">
-    <p v-if="name">{{ name }}</p>
-    <div class="icon" v-if="icon">
-      <icons :icon="icon" :width="width" :height="height" />
-    </div>
+  <div class="button" :class="{ loading }">
+    <template v-if="loading">
+      <span class="loader" />
+    </template>
+    <template v-else>
+      <p v-if="name">{{ name }}</p>
+      <div class="icon" v-if="icon">
+        <icons :icon="icon" :width="width" :height="height" />
+      </div>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
 defineProps<{
-  name?: any;
-  icon?: any;
-  width?: any;
-  height?: any;
+  name?: string;
+  icon?: string;
+  width?: number | string;
+  height?: number | string;
+  loading?: boolean;
 }>();
 </script>
 
@@ -28,6 +34,12 @@ defineProps<{
   @include flex-center;
   display: inline-flex;
   position: relative;
+
+  &.loading {
+    cursor: default;
+    opacity: 0.7;
+    pointer-events: none;
+  }
 
   &.border {
     background-color: $trans;
@@ -46,13 +58,12 @@ defineProps<{
 
   &.gray {
     background-color: $gray;
-    padding: 1.1rem 4.5rem;
-
     &:hover {
       background-color: $white;
     }
   }
-  &:hover {
+
+  &:hover:not(.loading) {
     background-color: $accent;
   }
 }
@@ -70,10 +81,27 @@ defineProps<{
   width: 2rem;
   height: 1.8rem;
   margin-left: 0.5rem;
+
   svg {
     @include flex-center;
     width: 100%;
     height: 100%;
+  }
+}
+
+// Simple CSS loader
+.loader {
+  width: 1.8rem;
+  height: 1.8rem;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

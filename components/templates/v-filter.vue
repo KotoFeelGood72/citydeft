@@ -5,15 +5,23 @@
         <div class="filter-top">
           <div class="filter-col">
             <p class="filter_col__label">Категория</p>
-            <Selects :options="buildCategories" v-model="filter.category" />
+            <Selects
+              :options="buildCategories"
+              v-model="filter.category"
+              :selectFirst="true"
+            />
           </div>
           <div class="filter-col">
             <p class="filter_col__label">Тип недвижимости</p>
-            <Selects :options="buildTypes" v-model="filter.types" />
+            <Selects :options="buildTypes" v-model="filter.types" :selectFirst="true" />
           </div>
           <div class="filter-col">
             <p class="filter_col__label">Район</p>
-            <Selects :options="buildDistrict" v-model="filter.district" />
+            <Selects
+              :options="buildDistrict"
+              v-model="filter.district"
+              :selectFirst="true"
+            />
           </div>
           <div class="filter-col price-col">
             <div class="label-input__group">Ценовой диапазон, €</div>
@@ -36,7 +44,7 @@
           </div>
           <div class="filter-col">
             <p class="filter_col__label">Планировка</p>
-            <Selects :options="buildPlan" v-model="filter.plan" />
+            <Selects :options="buildPlan" v-model="filter.plan" :selectFirst="false" />
           </div>
         </div>
 
@@ -44,19 +52,31 @@
           <div class="filter-medium">
             <div class="filter-col">
               <p class="filter_col__label">Расстояние до моря</p>
-              <Selects :options="buildDistance" v-model="filter.km" />
+              <Selects
+                :options="buildDistance"
+                v-model="filter.km"
+                :selectFirst="false"
+              />
             </div>
             <div class="filter-col">
               <p class="filter_col__label">Площадь</p>
-              <Selects :options="buildArea" v-model="filter.place" />
+              <Selects :options="buildArea" v-model="filter.place" :selectFirst="false" />
             </div>
             <div class="filter-col">
               <p class="filter_col__label">Год постройки</p>
-              <Selects :options="yearsOptions" v-model="filter.date" />
+              <Selects
+                :options="yearsOptions"
+                v-model="filter.date"
+                :selectFirst="false"
+              />
             </div>
             <div class="filter-col">
               <p class="filter_col__label">Инфраструктура</p>
-              <Selects :options="buildInfrastructure" v-model="filter.infrastructure" />
+              <Selects
+                :options="buildInfrastructure"
+                v-model="filter.infrastructure"
+                :selectFirst="false"
+              />
             </div>
           </div>
         </div>
@@ -66,7 +86,14 @@
             <div class="filter-more" @click="open = !open">Расширенные параметры</div>
           </li>
           <li><div class="filter-reset" @click="resetFilter">Сбросить фильтр</div></li>
-          <li><v-btn name="Поиск" class="rounded-btn small" @click="searchEvent" /></li>
+          <li>
+            <v-btn
+              name="Поиск"
+              class="rounded-btn small"
+              @click="searchEvent"
+              :loading="isLoading"
+            />
+          </li>
         </ul>
       </div>
     </div>
@@ -86,10 +113,14 @@ const router = useRouter();
 const route = useRoute();
 const { tm } = useI18n();
 
+defineProps<{
+  isLoading?: boolean;
+}>();
+
 const open = ref(false);
 
 // реактивный объект фильтра
-const filter = reactive({
+const filter = ref<any>({
   category: null,
   types: null,
   district: null,

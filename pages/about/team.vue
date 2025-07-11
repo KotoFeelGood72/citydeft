@@ -1,7 +1,7 @@
 <template>
   <div class="team">
     <div class="container">
-      <sectionTitle title="Наша команда" class="big" />
+      <sectionTitle :title="$t('ui.teamTitle')" class="big" />
       <div class="team__main">
         <div class="team_main__img">
           <nuxt-img v-if="img?.source_url" :src="img.source_url" />

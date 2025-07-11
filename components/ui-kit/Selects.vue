@@ -1,7 +1,6 @@
 <template>
   <div class="selects">
     <select v-model="localValue">
-      <!-- это и есть наш placeholder -->
       <option disabled value="">{{ $t("ui.select.empty") }}</option>
 
       <option
@@ -25,6 +24,7 @@ const { rt } = useI18n();
 const props = defineProps<{
   options: any;
   modelValue: any;
+  selectFirst: any;
 }>();
 
 const emit = defineEmits<{
@@ -34,14 +34,14 @@ const emit = defineEmits<{
 watch(
   () => props.options,
   (opts) => {
-    if ((!props.modelValue || props.modelValue === "") && opts?.length) {
-      emit("update:modelValue", rt(opts[0].name)); // value = перевод
+    const shouldSelect = props.selectFirst !== false; // по умолчанию true
+    if (shouldSelect && (!props.modelValue || props.modelValue === "") && opts?.length) {
+      emit("update:modelValue", rt(opts[0].name));
     }
   },
   { immediate: true }
 );
 
-/* обычное двустороннее связывание */
 const localValue = computed({
   get: () => props.modelValue,
   set: (v) => emit("update:modelValue", v),
