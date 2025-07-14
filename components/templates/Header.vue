@@ -79,6 +79,8 @@ const { openModal } = useModalStore();
   svg {
     width: 100%;
     height: 100%;
+    fill: $yellow;
+    color: $yellow !important;
   }
   &:hover {
     color: $accent;
