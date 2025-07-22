@@ -6,7 +6,7 @@
       <option
         v-for="(item, i) in options"
         :key="`options-item-${i}`"
-        :value="$rt(item.name)"
+        :value="item.id"
       >
         {{ $rt(item.name) }}
       </option>
@@ -20,32 +20,39 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import icons from "../icons/icons.vue";
+
+interface SelectOption {
+  id: string | number;
+  name: string;
+}
+
 const { rt } = useI18n();
+
 const props = defineProps<{
-  options: any;
-  modelValue: any;
-  selectFirst: any;
+  options: SelectOption[];
+  modelValue: string | number | null;
+  selectFirst: boolean;
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", v: string | null): void;
+  (e: "update:modelValue", v: string | number | null): void;
 }>();
-
-watch(
-  () => props.options,
-  (opts) => {
-    const shouldSelect = props.selectFirst !== false; // по умолчанию true
-    if (shouldSelect && (!props.modelValue || props.modelValue === "") && opts?.length) {
-      emit("update:modelValue", rt(opts[0].name));
-    }
-  },
-  { immediate: true }
-);
 
 const localValue = computed({
   get: () => props.modelValue,
   set: (v) => emit("update:modelValue", v),
 });
+
+watch(
+  () => props.options,
+  (opts) => {
+    const shouldSelect = props.selectFirst !== false;
+    if (shouldSelect && (!props.modelValue || props.modelValue === "") && opts?.length) {
+      emit("update:modelValue", opts[0].id);
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped lang="scss">

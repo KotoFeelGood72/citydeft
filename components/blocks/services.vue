@@ -79,19 +79,20 @@ const props = defineProps<{
 }
 
 .services_columns {
-  @include flex-start;
+  @include flex-center;
   align-items: flex-start;
-  margin: -4rem -4rem 0 0;
+  // margin: -4rem -4rem 0 0;
+  gap: 4rem;
 
   @include bp($point_2) {
     flex-direction: column;
-    margin: 0;
+    // margin: 0;
   }
   & > div {
-    padding: 4rem 4rem 0 0;
-    @include bp($point_2) {
-      padding: 0;
-    }
+    // padding: 4rem 4rem 0 0;
+    // @include bp($point_2) {
+    //   padding: 0;
+    // }
   }
 }
 
@@ -109,6 +110,7 @@ const props = defineProps<{
 }
 
 .services__list {
+  max-width: 38.4rem;
   &:first-child {
     @include bp($point_4) {
       margin-bottom: 4rem;

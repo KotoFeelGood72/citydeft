@@ -13,13 +13,19 @@
           </div>
           <div class="filter-col">
             <p class="filter_col__label">Тип недвижимости</p>
-            <Selects :options="buildTypes" v-model="filter.types" :selectFirst="true" />
+            <Selects 
+              :options="buildTypes" 
+              :modelValue="filter.types"
+              @update:modelValue="handleTypeChange"
+              :selectFirst="true" 
+            />
           </div>
           <div class="filter-col">
             <p class="filter_col__label">Район</p>
             <Selects
               :options="buildDistrict"
-              v-model="filter.district"
+              :modelValue="filter.district"
+              @update:modelValue="handleDistrictChange"
               :selectFirst="true"
             />
           </div>
@@ -120,7 +126,20 @@ defineProps<{
 const open = ref(false);
 
 // реактивный объект фильтра
-const filter = ref<any>({
+const filter = ref<{
+  category: number | null;
+  types: string | null;
+  district: string | null;
+  startPrice: number | null;
+  endPrice: number | null;
+  plan: string | null;
+  km: string | null;
+  place: string | null;
+  date: string | null;
+  infrastructure: string | null;
+  page: number;
+  per_page: number;
+}>({
   category: null,
   types: null,
   district: null,
@@ -135,12 +154,30 @@ const filter = ref<any>({
   per_page: 6,
 });
 
+// Обработчики для select компонентов
+const handleTypeChange = (value: any) => {
+  filter.value.types = value?.id || value || null;
+};
+
+const handleDistrictChange = (value: any) => {
+  filter.value.district = value?.id || value || null;
+};
+
 // подтягиваем параметры из query, если есть
 onMounted(() => {
   open.value = !!useAttrs().isOpen;
   Object.entries(route.query).forEach(([key, val]) => {
-    if (key in filter) {
-      (filter as any)[key] = val;
+    if (key in filter.value) {
+      if (key === 'category') {
+        filter.value[key] = val ? Number(val) : null;
+      } else if (key === 'startPrice' || key === 'endPrice' || key === 'page' || key === 'per_page') {
+        filter.value[key] = val ? Number(val) : null;
+      } else if (key === 'types' || key === 'district') {
+        // Для types и district используем строковое значение
+        filter.value[key] = val?.toString() || null;
+      } else {
+        filter.value[key] = val?.toString() || null;
+      }
     }
   });
 });
@@ -171,21 +208,25 @@ const resetFilter = () => {
 };
 
 const searchEvent = () => {
-  // 1. Явно типизируем entries
-  const entries = Object.entries(filter) as [string, string | number | null][];
-
-  // 2. Делаем reduce с корректными типами
-  const params = entries.reduce<Record<string, string | number>>((acc, [k, v]) => {
-    // 2.1. Отбрасываем null и undefined
-    if (v == null) return acc;
-
-    // 2.2. Если строка — отбрасываем пустые
-    if (typeof v === "string" && v.trim() === "") {
+  const params = Object.entries(filter.value).reduce<Record<string, string | number>>((acc, [key, value]) => {
+    // Пропускаем null, undefined и пустые строки
+    if (value == null || (typeof value === 'string' && value.trim() === '')) {
       return acc;
     }
 
-    // 2.3. Всё остальное (числа и непустые строки) сохраняем
-    acc[k] = v;
+    // Преобразуем значение в зависимости от типа поля
+    if (['category', 'startPrice', 'endPrice', 'page', 'per_page'].includes(key)) {
+      const numValue = Number(value);
+      if (!isNaN(numValue)) {
+        acc[key] = numValue;
+      }
+    } else if (key === 'types' || key === 'district') {
+      // Для types и district берем только строковое значение
+      acc[key] = typeof value === 'object' && value !== null ? value.id : value.toString();
+    } else {
+      acc[key] = value.toString();
+    }
+
     return acc;
   }, {});
 
@@ -322,3 +363,4 @@ const searchEvent = () => {
   flex-grow: 1;
 }
 </style>
+
