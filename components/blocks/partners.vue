@@ -42,9 +42,6 @@ const props = defineProps<{
   }
 
   li {
-    box-shadow: 0px 10.424965858459473px 10.424965858459473px 0px #003f800d;
-    border-radius: 1rem;
-    height: 8.3rem;
     @include flex-center;
   }
 }

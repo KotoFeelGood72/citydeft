@@ -1,4 +1,5 @@
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n"; // или из nuxt
 import { api } from "~/api/api";
 
 /**
@@ -13,6 +14,7 @@ export function usePageContent(
   resource: "pages" | "posts" | "service" = "pages",
   lang?: string
 ) {
+  const { locale } = useI18n(); // берём текущий язык
   const data = ref<any>(null);
 
   /**
@@ -24,14 +26,14 @@ export function usePageContent(
   const load = async (
     newSlug: string = slug,
     newResource: "pages" | "posts" | "service" = resource,
-    newLang: string = lang || ""
+    newLang: string = lang || locale.value // если lang не передан — берем текущий язык
   ) => {
     try {
       const endpoint = `/wp/v2/${newResource}`;
       const response = await api.get<any[]>(`${endpoint}`, {
         params: {
           slug: newSlug,
-          ...(newLang ? { lang: newLang } : {}), // добавляем ?lang=... если передан
+          lang: newLang, // всегда подставляем текущий язык
         },
       });
 

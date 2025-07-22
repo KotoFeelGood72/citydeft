@@ -14,7 +14,7 @@
               </nuxt-link>
             </div>
             <div class="footer_info__descr">{{ $t("brandShort") }}</div>
-            <ul class="footer-social">
+            <ul class="footer-social" v-if="options.contacts?.social">
               <li
                 v-for="(item, i) in options.contacts.social"
                 :key="'social-footer-' + i"
@@ -28,18 +28,18 @@
         </div>
         <div
           class="footer_col__nav"
-          v-for="(item, i) in options.navigation"
+          v-for="(item, i) in options.navigation || []"
           :key="item + 'footer-navigation-' + i"
         >
           <v-col-nav :data="item" />
         </div>
       </div>
       <div class="mobile-info">
-        <span>Адрес офиса:</span>
-        <p>Deft Group/Saray Mah. Oral Cad. 25/B Öztürk 2 Apt. Alanya / Antalya</p>
+        <span>{{ $t('ui.office') }}:</span>
+        <p>{{ options.contacts?.address || 'Deft Group/Saray Mah. Oral Cad. 25/B Öztürk 2 Apt. Alanya / Antalya' }}</p>
       </div>
       <div class="mobile-bottom">
-        <ul class="footer-social">
+        <ul class="footer-social" v-if="options.contacts?.social">
           <li v-for="(item, i) in options.contacts.social" :key="'social-footer-' + i">
             <a target="_blank" :href="item.link">
               <icons v-if="item.icon" :icon="item.icon" />
@@ -58,7 +58,9 @@
 import vColNav from "../ui-kit/v-col-nav.vue";
 import icons from "../icons/icons.vue";
 import { useOptionsStore, useOptionsStoreRefs } from "~/store/useOptionsStore";
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
 const { options } = useOptionsStoreRefs();
 
 const scrollToTop = () => {

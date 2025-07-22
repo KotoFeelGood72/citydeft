@@ -2,7 +2,7 @@
   <div class="question">
     <div class="container">
       <div class="questions_main">
-        <section-title title="Остались вопросы?" :level="5" class="big" />
+        <section-title :title="$t('ui.questions.title')" :level="5" class="big" />
         <v-form :data="form" class="questions-form" />
       </div>
     </div>
@@ -13,10 +13,13 @@
 import { reactive } from "vue";
 import sectionTitle from "../ui-kit/section-title.vue";
 import vForm from "../templates/v-form.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const form = reactive({
-  question: "Написать вопрос...",
-  btn: "Задать вопрос",
+  question: t("ui.questions.placeholder"),
+  btn: t("ui.questions.button"),
   btnClass: "gray rounded-btn",
 });
 </script>

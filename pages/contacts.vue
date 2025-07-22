@@ -28,7 +28,7 @@
               <p>Saray Mah. Oral Cad. 25/B Öztürk 2 Apt. Alanya / Antalya</p>
             </li>
             <li>
-              <span>{{ $t("socialName") }}:</span>
+              <span>{{ $t("ui.socialName") }}:</span>
               <ul class="contacts-social">
                 <li
                   v-for="(item, i) in options.contacts.social"

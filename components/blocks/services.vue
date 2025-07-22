@@ -1,11 +1,11 @@
 <template>
-  <div class="services" v-if="data">
+  <div class="services" v-if="data && data['all-service']">
     <div class="container">
       <div class="services_main">
-        <section-title :title="data['all-service'].title" :level="3" class="big" />
+        <section-title :title="data['all-service'].title || ''" :level="3" class="big" />
         <div class="services_columns">
           <div>
-            <ul class="services__list">
+            <ul class="services__list" v-if="data['all-service']['list-left']">
               <li
                 v-for="(item, i) in data['all-service']['list-left']"
                 :key="`services-one-${i}`"
@@ -21,12 +21,12 @@
             </ul>
           </div>
           <div>
-            <div class="column-img">
+            <div class="column-img" v-if="data['all-service'].img">
               <NuxtImg :src="data['all-service'].img" alt="" loading="lazy" />
             </div>
           </div>
           <div>
-            <ul class="services__list">
+            <ul class="services__list" v-if="data['all-service']['list-right']">
               <li
                 v-for="(item, i) in data['all-service']['list-right']"
                 :key="`services-two-${i}`"
@@ -81,18 +81,10 @@ const props = defineProps<{
 .services_columns {
   @include flex-center;
   align-items: flex-start;
-  // margin: -4rem -4rem 0 0;
   gap: 4rem;
 
   @include bp($point_2) {
     flex-direction: column;
-    // margin: 0;
-  }
-  & > div {
-    // padding: 4rem 4rem 0 0;
-    // @include bp($point_2) {
-    //   padding: 0;
-    // }
   }
 }
 
